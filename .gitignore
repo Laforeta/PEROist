@@ -1,0 +1,10 @@
+_*.cmd
+Thumbs.db
+*.jpg
+*.png
+*.swf
+/build/
+/kcs/
+/scrap/
+/temp/
+/src/
