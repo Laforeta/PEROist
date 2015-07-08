@@ -3,9 +3,6 @@ SETLOCAL ENABLEDELAYEDEXPANSION ENABLEEXTENSIONS
 SET ME=%~n0
 SET PARENT=%~dp0
 
-REM Create a log file named [script].YYYYMMDDHHMMSS.txt
-SET log=%PARENT%\%me%.%DATE:~10,4%_%DATE:~4,2%_%DATE:~7,2%%TIME:~0,2%_%TIME:~3,2%_%TIME:~6,2%.txt
-
 REM Define location of wget binary
 PATH %cd%\bin
 
