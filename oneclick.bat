@@ -3,6 +3,10 @@ SETLOCAL ENABLEDELAYEDEXPANSION ENABLEEXTENSIONS
 SET ME=%~n0
 SET PARENT=%~dp0
 
+REM Remove temporary files if a previoius run had aborted. 
+CALL CLEANUP
+
+
 MKDIR temp
 COPY *.swf temp
 
@@ -11,4 +15,8 @@ CALL SCALE
 CALL REPLACE
 
 COPY %parent%temp\*.hack.swf %parent%
-REM RD /s /q temp
+
+CD %PARENT%
+CALL CLEANUP
+
+ECHO All Done
