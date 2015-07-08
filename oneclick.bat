@@ -12,7 +12,7 @@ MKDIR temp
 COPY *.swf temp
 
 CALL EXTRACT > extract.log 2>&1
-CALL SCALE > scale.log 2>&1
+CALL SCALE 2> scale.log
 CALL REPLACE > replace.log 2>&1
 
 ECHO Exporting files...
