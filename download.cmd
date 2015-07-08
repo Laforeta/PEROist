@@ -10,8 +10,8 @@ REM Define location of wget binary
 PATH %cd%\bin
 
 REM Load ship lists
-SET KANMUSU=%PARENT%src\kanmusu.txt
-SET ABYSSAL=%PARENT%src\abyssal.txt
+SET KANMUSU=%PARENT%data\kanmusu.txt
+SET ABYSSAL=%PARENT%data\abyssal.txt
 
 REM Define server IP
 SET "server0="203.104.209.102"  ::Hashirajima
