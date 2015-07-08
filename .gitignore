@@ -1,4 +1,6 @@
 _*.cmd
+_*.bat
+*.log
 Thumbs.db
 *.jpg
 *.png
