@@ -1,6 +1,7 @@
 _*.cmd
 _*.bat
 *.log
+log*.txt
 Thumbs.db
 *.jpg
 *.png
@@ -10,3 +11,4 @@ Thumbs.db
 /scrap/
 /temp/
 /src/
+/bin_dev/
