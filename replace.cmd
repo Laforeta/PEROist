@@ -40,4 +40,3 @@ ENDLOCAL
 ECHO ################
 ECHO REPLACEMENT DONE
 ECHO ################
-PAUSE
