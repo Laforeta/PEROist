@@ -3,8 +3,8 @@ _*.bat
 *.log
 log*.txt
 Thumbs.db
-*.jpg
 *.png
+*.jpg
 *.swf
 /build/
 /kcs/
