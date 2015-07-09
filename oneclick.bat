@@ -17,7 +17,7 @@ CALL CLEANUP > nul 2>&1
 MKDIR temp
 
 ECHO Importing files...
-COPY *.swf temp
+CALL IMPORT 2> import.log
 
 CALL EXTRACT > extract.log 2>&1
 CALL SCALE 2> scale.log
@@ -25,10 +25,11 @@ CALL REPLACE > replace.log 2>&1
 
 ECHO Exporting files...
 COPY %parent%temp\*.hack.swf %parent%
+COPY %parent%temp\abyssal\*.hack.swf %parent%
 
 CD %PARENT%
 ECHO Saving log to log_lastrun.txt...
-COPY selftest.log + extract.log + scale.log + replace.log log_lastrun.txt > nul 2>&1
+COPY selftest.log + import.log + extract.log + scale.log + replace.log log_lastrun.txt > nul 2>&1
 ECHO Removing temporary files...
 CALL CLEANUP > nul 2>&1
 
