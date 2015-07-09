@@ -1,0 +1,5 @@
+selftest.cmd
+cleanup.cmd
+extract.cmd
+scale.cmd
+replace.cmd
