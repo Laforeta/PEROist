@@ -3,6 +3,11 @@ SETLOCAL ENABLEDELAYEDEXPANSION ENABLEEXTENSIONS
 SET ME=%~n0
 SET PARENT=%~dp0
 
+ECHO Preparing folders...
+DEL /q *.hack.swf > nul 2>&1
+CALL CLEANUP > nul 2>&1
+MKDIR temp
+
 ECHO Checking scripts...
 FOR /F %%f in ('type data\modules') DO (
 	IF NOT EXIST %%f ECHO %%F is missing && GOTO GENERIC_FAIL
@@ -12,16 +17,11 @@ ECHO Testing modules...
 CALL SELFTEST > selftest.log 2>&1
 if %errorlevel% neq 0 GOTO GENERIC_FAIL
 
-ECHO Preparing folders...
-DEL /q *.hack.swf > nul 2>&1
-CALL CLEANUP > nul 2>&1
-MKDIR temp
-
 ECHO Looking for files to import...
 IF NOT EXIST *.swf ECHO But there are no files to import... && GOTO NORMAL_EXIT 
 
 ECHO Importing files...
-CALL IMPORT 2> import.log
+CALL IMPORT > import.log 2>&1
 
 CALL EXTRACT > extract.log 2>&1
 CALL SCALE 2> scale.log
