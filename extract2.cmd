@@ -11,18 +11,18 @@ CD %PARENT%temp
 FOR %%f IN (%PARENT%temp\*.swf) DO (
 	ECHO Extracting images in %%f>CON
 	ECHO Extracting images in %%f
-	java -jar %PARENT%bin\ffdec\ffdec.jar -format image:png -export image "%%f_images" %%f
-	IF NOT EXIST %%f_images\25.png ECHO Primary extraction method failed, switching to backup method && CALL :FORCE_EXTRACT
-	IF NOT EXIST %%f_images\25.png ECHO Backup extraction method failed. Aborting script... && GOTO EXTRACT_END_FAIL
+	java -jar %PARENT%bin\ffdec\ffdec.jar -onerror ignore -format image:png -export image "%%f_images" %%f
+	IF NOT EXIST %%f_images\17.png ECHO Primary extraction method failed, switching to backup method && SET EXCEPTION_NAME=%%f&& CALL :FORCE_EXTRACT
+	IF NOT EXIST %%f_images\17.png ECHO Backup extraction method failed. Aborting script...&& GOTO EXTRACT_END_FAIL
 )
 
 REM Export abyssal sprites (CharacterID 1,3)
-CD abyssal
+CD %PARENT%temp\abyssal
 FOR %%f IN (%PARENT%temp\abyssal\*.swf) DO (
 	ECHO Extracting images in %%f>CON
 	ECHO Extracting images in %%f
-	java -jar %PARENT%bin\ffdec\ffdec.jar -format image:png -export image "%%f_images" %%f
-	IF NOT EXIST %%f_images\3.png ECHO Primary extraction method failed, switching to backup method && CALL :FORCE_EXTRACT
+	java -jar %PARENT%bin\ffdec\ffdec.jar -onerror ignore -format image:png -export image "%%f_images" %%f
+	IF NOT EXIST %%f_images\3.png ECHO Primary extraction method failed, switching to backup method && SET EXCEPTION_NAME=%%f&& CALL :FORCE_EXTRACT
 	IF NOT EXIST %%f_images\3.png ECHO Backup extraction method failed. Aborting Script... && GOTO EXTRACT_END_FAIL
 )
 
@@ -41,22 +41,23 @@ ECHO ----------------->CON
 EXIT /B 1
 
 :FORCE_EXTRACT
-MKDIR %%f_images
-%PARENT%bin\swfextract %%f -j 1 -o %%f_images\1.png
-%PARENT%bin\swfextract %%f -j 3 -o %%f_images\3.png
-%PARENT%bin\swfextract %%f -j 5 -o %%f_images\5.png
-%PARENT%bin\swfextract %%f -j 7 -o %%f_images\7.png
-%PARENT%bin\swfextract %%f -j 9 -o %%f_images\9.png
-%PARENT%bin\swfextract %%f -j 11 -o %%f_images\11.png
-%PARENT%bin\swfextract %%f -j 13 -o %%f_images\13.png
-%PARENT%bin\swfextract %%f -j 15 -o %%f_images\15.png
-%PARENT%bin\swfextract %%f -j 17 -o %%f_images\17.png
-%PARENT%bin\swfextract %%f -j 19 -o %%f_images\19.png
-%PARENT%bin\swfextract %%f -j 21 -o %%f_images\21.png
-%PARENT%bin\swfextract %%f -j 23 -o %%f_images\23.png
-%PARENT%bin\swfextract %%f -j 25 -o %%f_images\25.png
-%PARENT%bin\swfextract %%f -j 27 -o %%f_images\27.png
-%PARENT%bin\swfextract %%f -j 29 -o %%f_images\29.png
+REM If a regular file accidentally goes into this subroutine it will generate files that have .png suffix but are actually RGB JPEGs
+MKDIR %EXCEPTION_NAME%_images
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 1 -o %EXCEPTION_NAME%_images\1.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 3 -o %EXCEPTION_NAME%_images\3.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 5 -o %EXCEPTION_NAME%_images\5.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 7 -o %EXCEPTION_NAME%_images\7.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 9 -o %EXCEPTION_NAME%_images\9.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 11 -o %EXCEPTION_NAME%_images\11.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 13 -o %EXCEPTION_NAME%_images\13.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 15 -o %EXCEPTION_NAME%_images\15.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 17 -o %EXCEPTION_NAME%_images\17.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 19 -o %EXCEPTION_NAME%_images\19.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 21 -o %EXCEPTION_NAME%_images\21.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 23 -o %EXCEPTION_NAME%_images\23.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 25 -o %EXCEPTION_NAME%_images\25.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 27 -o %EXCEPTION_NAME%_images\27.png
+%PARENT%bin\swfextract %EXCEPTION_NAME% -j 29 -o %EXCEPTION_NAME%_images\29.png
 
 REM Abort if no images were extracted at all (Probably redundant)
 IF NOT EXIST %%f_images\1.png ECHO Backup extraction method failed. Aborting script... && GOTO EXTRACT_END_FAIL
