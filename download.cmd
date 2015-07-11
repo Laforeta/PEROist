@@ -7,8 +7,7 @@ REM Define location of wget binary
 PATH %cd%\bin
 
 REM Load ship lists
-SET KANMUSU=%PARENT%data\kanmusu.txt
-SET ABYSSAL=%PARENT%data\abyssal.txt
+SET SHIPLIST=%PARENT%data\shiplist.txt
 
 REM Define server IP
 SET "server0="203.104.209.102"  ::Hashirajima
@@ -37,25 +36,11 @@ ECHO Press any key to start downloading
 ECHO ----------------------------------
 PAUSE
 
-REM Download friendly ship sprites
+REM Download round robin from all servers
 
 MKDIR temp
 CD temp
-FOR /F %%G in ('type %KANMUSU%') DO (
-	SET /a counter+=1
-	SET /a pointer=counter%%20
-	CALL SET "server=%%server!pointer!%%"
-	wget http://!server!/kcs/resources/swf/ships/%%G.swf -w 1
-)
-
-
-REM Download Abyssal ship sprites (NOT WORKING YET)
-REM DOWNLOAD ABYSSAL files to a separate folder for proper handling
-
-CD %PARENT%temp
-MKDIR abyssal
-CD abyssal
-FOR /F %%G in ('type %ABYSSAL%') DO (
+FOR /F %%G in ('type %SHIPLIST%') DO (
 	SET /a counter+=1
 	SET /a pointer=counter%%20
 	CALL SET "server=%%server!pointer!%%"
