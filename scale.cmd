@@ -1,3 +1,4 @@
+@ECHO OFF
 SETLOCAL ENABLEDELAYEDEXPANSION ENABLEEXTENSIONS
 SET ME=%~n0
 SET PARENT=%~dp0
@@ -16,34 +17,34 @@ REM Establish working path - waifu2x-cpp seems to have trouble finding the model
 CD "%PARENT%\bin"
 
 REM Merged scale routines for KANMUSU
-FOR %%f IN (%PARENT%temp\*) DO (
+FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\*.swf"') DO (
 	SETLOCAL ENABLEDELAYEDEXPANSION
-	SET FILENAME=%%f
+	SET "FILENAME=%%g"
 	SET /a TARGET=1
-	CALL SCALE
+	CALL :SCALE
 	SET /a TARGET=3
-	CALL SCALE
+	CALL :SCALE
 	SET /a TARGET=5
-	CALL SCALE
+	CALL :SCALE
 	SET /a TARGET=7
-	CALL SCALE
+	CALL :SCALE
 	SET /a TARGET=17
-	CALL SCALE_ALPHA
+	CALL :SCALE_ALPHA
 	SET /a TARGET=19
-	CALL SCALE_ALPHA
+	CALL :SCALE_ALPHA
 	SET /a TARGET=27
-	CALL SCALE_ALPHA
+	CALL :SCALE_ALPHA
 	SET /a TARGET=29
-	CALL SCALE_ALPHA
+	CALL :SCALE_ALPHA
 	ENDLOCAL
 )
 
 REM Add a loop for EXCEPTION when it's done
 
 REM Merged scale routines for ABYSSAL
-FOR %%f IN (%PARENT%temp\abyssal\*) DO (
+FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\*.swf"') DO (
 	SETLOCAL ENABLEDELAYEDEXPANSION
-	SET FILENAME=%%f
+	SET "FILENAME=%%g"
 	SET /a TARGET=1
 	CALL :SCALE
 	SET /a TARGET=3
@@ -67,21 +68,21 @@ REM Check the subroutines below, they appear to breakdown when there is a space 
 :SCALE
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
 ECHO Generating Scaled Image %TARGET% in %FILENAME%
-waifu2x-converter -m noise_scale --noise_level 1 -i %FILENAME%_images\%TARGET%.png -o %FILENAME%_images\2x%TARGET%.png
+waifu2x-converter -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%.png" -o "%FILENAME%_images\2x%TARGET%.png"
 GOTO:EOF
 
 :SCALE_ALPHA
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
 ECHO Processing Alpha of Image %TARGET% in %FILENAME%...
-convert %FILENAME%_images\%TARGET%.png -channel alpha -separate %FILENAME%_images\%TARGET%_alpha.png
+convert "%FILENAME%_images\%TARGET%.png" -channel alpha -separate "%FILENAME%_images\%TARGET%_alpha.png"
 ECHO Processing RGB of Image %TARGET% in %FILENAME%...
-convert %FILENAME%_images\%TARGET%.png -channel alpha -threshold 100%% +channel %FILENAME%_images\%TARGET%_rgb.png
-ECHO Generating Scaled RGB for Image %TARGET% in %FILENAME%
-waifu2x-converter -m noise_scale --noise_level 1 -i %FILENAME%_images\%TARGET%_rgb.png -o %FILENAME%_images\2x%TARGET%_rgb.png
-ECHO Generating Scaled alpha for Image %TARGET% in %FILENAME%
-waifu2x-converter -m scale -i %FILENAME%_images\%TARGET%_alpha.png -o %FILENAME%_images\2x%TARGET%_alpha.png
-ECHO Combine RGB with Alpha
-convert %FILENAME%_images\2x%TARGET%_rgb.png %FILENAME%_images\2x%TARGET%_alpha.png -alpha off -compose CopyOpacity -composite PNG32:%FILENAME%_images\2x%TARGET%.png
+convert "%FILENAME%_images\%TARGET%.png" -channel alpha -threshold 100%% +channel "%FILENAME%_images\%TARGET%_rgb.png"
+ECHO Generating Scaled RGB for Image %TARGET% in %FILENAME%...
+waifu2x-converter -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%_rgb.png" -o "%FILENAME%_images\2x%TARGET%_rgb.png"
+ECHO Generating Scaled alpha for Image %TARGET% in %FILENAME%...
+waifu2x-converter -m scale -i "%FILENAME%_images\%TARGET%_alpha.png" -o "%FILENAME%_images\2x%TARGET%_alpha.png"
+ECHO Combining RGB with Alpha for Image %TARGET% in %FILENAME%...
+convert "%FILENAME%_images\2x%TARGET%_rgb.png" "%FILENAME%_images\2x%TARGET%_alpha.png" -alpha off -compose CopyOpacity -composite PNG32:"%FILENAME%_images\2x%TARGET%.png"
 GOTO:EOF
 
 :SHARPEN
