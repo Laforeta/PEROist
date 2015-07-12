@@ -8,15 +8,15 @@ MKDIR temp
 CD bin
 
 ECHO Testing ffdec..>con
-java -jar %PARENT%bin/ffdec/ffdec.jar --help
+java -jar "%PARENT%bin\ffdec\ffdec.jar" --help
 if %errorlevel% neq 0 GOTO FFDEC_FAIL
 
 ECHO Testing ImageMagick...>con
-convert %PARENT%\data\selftest.gif %PARENT%temp\selftest.png
+convert "%PARENT%\data\selftest.gif" "%PARENT%temp\selftest.png"
 if %errorlevel% neq 0 GOTO IM_FAIL
 
 ECHO Testing Waifu2x...>con
-waifu2x-converter.exe -i %PARENT%temp\selftest.png -o %PARENT%temp\selftest_2x.png -m noise_scale --noise_level 1
+waifu2x-converter.exe -i "%PARENT%temp\selftest.png" -o "%PARENT%temp\selftest_2x.png" -m noise_scale --noise_level 1
 if %errorlevel% neq 0 GOTO Waifu2x_FAIL
 
 GOTO PASS
