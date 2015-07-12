@@ -28,8 +28,8 @@ CALL SCALE 2> scale.log
 CALL REPLACE > replace.log 2>&1
 
 ECHO Exporting files...
-COPY %parent%temp\*.hack.swf %parent%
-COPY %parent%temp\abyssal\*.hack.swf %parent%
+COPY "%parent%temp\*.hack.swf" "%parent%"
+COPY "%parent%temp\abyssal\*.hack.swf" "%parent%"
 
 CD %PARENT%
 ECHO Saving log to log_lastrun.txt...
