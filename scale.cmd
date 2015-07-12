@@ -17,7 +17,7 @@ REM Establish working path - waifu2x-cpp seems to have trouble finding the model
 CD "%PARENT%\bin"
 
 REM Merged scale routines for KANMUSU
-FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\*.swf"') DO (
+FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\kanmusu\*.swf"') DO (
 	SETLOCAL ENABLEDELAYEDEXPANSION
 	SET "FILENAME=%%g"
 	SET /a TARGET=1
@@ -42,7 +42,7 @@ FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\*.swf"') DO (
 REM Add a loop for EXCEPTION when it's done
 
 REM Merged scale routines for ABYSSAL
-FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\*.swf"') DO (
+FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\abyssal\*.swf"') DO (
 	SETLOCAL ENABLEDELAYEDEXPANSION
 	SET "FILENAME=%%g"
 	SET /a TARGET=1

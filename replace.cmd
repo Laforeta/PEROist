@@ -7,8 +7,8 @@ ECHO Replacement Start>CON
 ECHO ----------------->CON
 
 REM Replace images in kanmusu sprites
-CD "%PARENT%temp"
-FOR /f "delims=" %%f IN ('DIR /b /s /a:-d "%PARENT%temp\*.swf"') DO (
+CD "%PARENT%temp\kanmusu"
+FOR /f "delims=" %%f IN ('DIR /b /s /a:-d "%PARENT%temp\kanmusu\*.swf"') DO (
 	IF NOT EXIST *.swf GOTO ABYSSAL
 	ECHO Replacing images in %%f...>CON
 	ECHO Replacing images in %%f...
@@ -25,14 +25,6 @@ FOR /f "delims=" %%f IN ('DIR /b /s /a:-d "%PARENT%temp\abyssal\*.swf"') DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replace "%%f" "%%fh" 2 "%%f_images\2x1.png" 4 "%%f_images\2x3.png"
 )
 REN *.swfh *.hack.swf
-
-REM Rename files to follow the .hack format
-ECHO Renaming output files...>CON
-ECHO Renaming output files...
-CD "%PARENT%temp"
-
-CD "%PARENT%temp\abyssal"
-
 
 REM Do not rename here for now, jump to end
 GOTO ENDBREAK

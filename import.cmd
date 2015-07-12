@@ -9,6 +9,7 @@ SET PARENT=%~dp0
 
 MKDIR "%PARENT%error"
 MKDIR "%PARENT%temp\abyssal"
+MKDIR "%PARENT%temp\kanmusu"
 For %%f in (*.swf) DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 1 -export image "%PARENT%temp" "%%f"
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 17 -export image "%PARENT%temp" "%%f"
@@ -23,7 +24,7 @@ For %%f in (*.swf) DO (
 	) ELSE (
 		ECHO Importing %%f...>con
 		ECHO Importing %%f
-		COPY "%%f" "%PARENT%temp\"
+		COPY "%%f" "%PARENT%temp\kanmusu\"
 	)
 	DEL /q "%PARENT%temp\*.png"
 )

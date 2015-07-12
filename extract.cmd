@@ -8,7 +8,7 @@ ECHO Extraction Start>CON
 ECHO ---------------->CON
 
 REM Export kanmusu sprites
-CD "%PARENT%temp"
+CD "%PARENT%temp\kanmusu"
 FOR %%f IN (*.swf) DO (
 	ECHO Extracting images in %%f>CON
 	ECHO Extracting images in %%f
