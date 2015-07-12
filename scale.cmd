@@ -57,14 +57,17 @@ ECHO Scaling Done>CON
 ECHO ------------>CON
 EXIT /B 0
 
+ECHO -------------->CON
+ECHO Scaling FAILED>CON
+ECHO -------------->CON
+EXIT /B 1
+
 REM Check the subroutines below, they appear to breakdown when there is a space in "%%f_images"
 
 :SCALE
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
 ECHO Generating Scaled Image %TARGET% in %FILENAME%
 waifu2x-converter -m noise_scale --noise_level 1 -i %FILENAME%_images\%TARGET%.png -o %FILENAME%_images\2x%TARGET%.png
-IF %errorlevel% neq 0 ECHO Scaling failed for %FILENAME%>2
-MOVE /y %FILENAME% %PARENT%ERROR 
 GOTO:EOF
 
 :SCALE_ALPHA
