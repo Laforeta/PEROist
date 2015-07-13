@@ -4,7 +4,6 @@ SET ME=%~n0
 SET PARENT=%~dp0
 
 ECHO Preparing folders...
-DEL /q *.hack.swf > nul 2>&1
 CALL CLEANUP > nul 2>&1
 MKDIR temp
 MKDIR output
@@ -20,21 +19,26 @@ if %errorlevel% neq 0 GOTO GENERIC_FAIL
 
 :AUTOPROCESS
 ECHO Looking for files to import...
-IF NOT EXIST *.swf ECHO There are no files left to import, exiting autoprocess && GOTO NORMAL_EXIT 
-
+IF NOT EXIST *.swf ECHO There are no files left to import, exiting autoprocess && GOTO ERROR_RECOVERY 
 ECHO Importing files...
 CALL IMPORT > import.log 2>&1
 CALL EXTRACT > extract.log 2>&1
 CALL SCALE 2> scale.log
 CALL REPLACE > replace.log 2>&1
-ECHO Exporting files...
-MOVE /y "%parent%temp\kanmusu\*.hack.swf" "%parent%output"
-MOVE /y "%parent%temp\abyssal\*.hack.swf" "%parent%output"
-DEL /q "%PARENT%temp\kanmusu\*.swf"
-DEL /q "%PARENT%temp\abyssal\*.swf"
-DEL /q "%PARENT%temp\*.swf"
+CALL EXPORT > export.log 2>&1
 GOTO AUTOPROCESS
 
+:ERROR_RECOVERY
+MOVE /y "%PARENT%error\*.swf" "%PARENT%"
+ECHO Retrying once
+IF NOT EXIST *.swf ECHO There are no files left to recover, exiting && GOTO NORMAL_EXIT 
+ECHO Importing files...
+CALL IMPORT > import.log 2>&1
+CALL EXTRACT > extract.log 2>&1
+CALL SCALE 2> scale.log
+CALL REPLACE > replace.log 2>&1
+CALL EXPORT > export.log 2>&1
+GOTO ERROR_RECOVERY
 
 :NORMAL_EXIT
 CD %PARENT%
