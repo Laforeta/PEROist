@@ -8,7 +8,7 @@ SET ME=%~n0
 SET PARENT=%~dp0
 
 REM Why does this work? what is %h defined as here? 
-MKDIR "%PARENT%temp\error"
+MKDIR "%PARENT%error"
 MKDIR "%PARENT%temp\abyssal"
 MKDIR "%PARENT%temp\kanmusu"
 SET BLOCKSIZE=5
