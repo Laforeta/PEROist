@@ -1,19 +1,11 @@
 @ECHO OFF
+SETLOCAL
 SET ME=%~n0
 SET PARENT=%~dp0
 
 ECHO Performing self-tests, please wait...>con
 MKDIR temp
 CD bin
-
-REM Detect whether the program runs on 64-bit OS by the existence of SysWOW64 folder.
-REM Test and see if this will trigger overzealous AV software
-ECHO Detecting system architecture
-IF EXIST "%SYSTEMROOT%\SysWOW64" (
-   SET AMD64=TRUE
-) ELSE (
-   SET AMD64=FLASE
-)
 
 ECHO Testing ffdec..>con
 java -jar "%PARENT%bin\ffdec\ffdec.jar" --help
@@ -45,6 +37,7 @@ ECHO Please view log_selftest.txt for detailed error message>con
 GOTO ABORT
 
 :PASS
+ENDLOCAL
 ECHO ---------------->con
 ECHO Self-test passed>con
 ECHO ---------------->con
@@ -52,6 +45,7 @@ CD %PARENT%
 EXIT /B 0
 
 :ABORT
+ENDLOCAL
 ECHO ---------------->con
 ECHO Self-test failed>con
 ECHO ---------------->con
