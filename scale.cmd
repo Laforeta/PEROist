@@ -15,6 +15,7 @@ ECHO ------------->CON
 
 REM Establish working path - waifu2x-cpp seems to have trouble finding the models without doing this
 CD "%PARENT%\bin"
+SET WAIFU2X=waifu2x-converter.exe
 
 REM Merged scale routines for KANMUSU
 FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\kanmusu\*.swf"') DO (
@@ -58,17 +59,16 @@ ECHO Scaling Done>CON
 ECHO ------------>CON
 EXIT /B 0
 
+REM Is this still needed? 
 ECHO -------------->CON
 ECHO Scaling FAILED>CON
 ECHO -------------->CON
 EXIT /B 1
 
-REM Check the subroutines below, they appear to breakdown when there is a space in "%%f_images"
-
 :SCALE
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
 ECHO Generating Scaled Image %TARGET% in %FILENAME%
-waifu2x-converter -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%.png" -o "%FILENAME%_images\2x%TARGET%.png"
+%WAIFU2X% -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%.png" -o "%FILENAME%_images\2x%TARGET%.png"
 GOTO:EOF
 
 :SCALE_ALPHA
@@ -78,9 +78,9 @@ convert "%FILENAME%_images\%TARGET%.png" -channel alpha -separate "%FILENAME%_im
 ECHO Processing RGB of Image %TARGET% in %FILENAME%...
 convert "%FILENAME%_images\%TARGET%.png" -channel alpha -threshold 100%% +channel "%FILENAME%_images\%TARGET%_rgb.png"
 ECHO Generating Scaled RGB for Image %TARGET% in %FILENAME%...
-waifu2x-converter -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%_rgb.png" -o "%FILENAME%_images\2x%TARGET%_rgb.png"
+%WAIFU2X% -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%_rgb.png" -o "%FILENAME%_images\2x%TARGET%_rgb.png"
 ECHO Generating Scaled alpha for Image %TARGET% in %FILENAME%...
-waifu2x-converter -m scale -i "%FILENAME%_images\%TARGET%_alpha.png" -o "%FILENAME%_images\2x%TARGET%_alpha.png"
+%WAIFU2X% -m scale -i "%FILENAME%_images\%TARGET%_alpha.png" -o "%FILENAME%_images\2x%TARGET%_alpha.png"
 ECHO Combining RGB with Alpha for Image %TARGET% in %FILENAME%...
 convert "%FILENAME%_images\2x%TARGET%_rgb.png" "%FILENAME%_images\2x%TARGET%_alpha.png" -alpha off -compose CopyOpacity -composite PNG32:"%FILENAME%_images\2x%TARGET%.png"
 GOTO:EOF
@@ -88,3 +88,6 @@ GOTO:EOF
 :SHARPEN
 ECHO Adding some finishing touches to %TARGET% in %FILENAME%>CON
 GOTO:EOF
+
+:TRIM
+ECHO Removing whitespace in the border
