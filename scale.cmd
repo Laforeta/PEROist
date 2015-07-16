@@ -25,11 +25,10 @@ IF %AMD64% neq 0 (
 	SET WAIFU2X="%PARENT%bin\x86\waifu2x-converter_x86.exe"
 )
 
-REM Do we really need YCbCr models? They are not any faster with GPU
 IF %GPU_FLAG% neq 0 (
 	SET MODEL=--model_dir "%PARENT%\bin\models_rgb"
 ) ELSE ( 
-	SET MODEL=--model_dir "%PARENT%\bin\models_ycbcr" --disable-gpu
+	SET MODEL=--model_dir "%PARENT%\bin\models_rgb" --disable-gpu
 )
 
 REM Merged scale routines for KANMUSU
