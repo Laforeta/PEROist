@@ -18,10 +18,19 @@ convert "%PARENT%\data\selftest.gif" "%PARENT%temp\selftest.png"
 if %errorlevel% neq 0 GOTO IM_FAIL
 
 ECHO Testing Waifu2x...>con
-waifu2x-converter.exe -i "%PARENT%temp\selftest.png" -o "%PARENT%temp\selftest_2x.png" -m noise_scale --noise_level 1
-if %errorlevel% neq 0 GOTO Waifu2x_FAIL
+CD "%PARENT%temp"
+IF %AMD64% neq 0 (
+	SET WAIFU2X="%PARENT%bin\x64\waifu2x-converter_x64.exe" --model_dir "%PARENT%\bin\models_rgb"
+) ELSE (
+	SET WAIFU2X="%PARENT%bin\x86\waifu2x-converter_x86.exe" --model_dir "%PARENT%\bin\models_rgb"
+)
 
-GOTO PASS
+%WAIFU2X% -i selftest.png -o selftest_2x.png -m noise_scale --noise_level 1
+if %errorlevel% neq 0 (
+	GOTO WAIFU2X_FAIL
+) ELSE ( 
+	GOTO PASS
+)
 
 :IM_FAIL
 ECHO An error has occured while testing ImageMagick>con
