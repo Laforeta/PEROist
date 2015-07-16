@@ -34,14 +34,12 @@ IF NOT EXIST *.swf (
 	ECHO There are no files left to import, exiting autoprocess
 	GOTO NORMAL_EXIT
 ) ELSE IF %RETRY_COUNTER% gtr %RETRY_LIMIT% (
-	SET /a %RETRY_COUNTER%+=1
-	ECHO The following files have failed after %RETRY_LIMIT% separate attempts, program will send them to %PARENT%badfiles...
-	DIR /b "%PARENT%error\*.swf">CON
-	MOVE /y "%PARENT%error\*.swf" "%PARENT%badfiles"
+	SET /a RETRY_COUNTER+=1
+	CALL :FLUSH_ERROR
 	SET /a RETRY_COUNTER=0
 	GOTO AUTOPROCESS
 ) ELSE IF EXIST "%PARENT%error\*.swf" (
-	SET /a %RETRY_COUNTER%+=1
+	SET /a RETRY_COUNTER+=1
 	MOVE /y "%PARENT%error\*.swf" "%PARENT%"
 	ECHO Importing files...
 	CALL IMPORT > import.log 2>&1
@@ -80,3 +78,15 @@ ECHO Process Failed :(
 ECHO -----------------
 PAUSE
 EXIT /B 1
+
+:FLUSH_ERROR
+ECHO The following files have failed after %RETRY_LIMIT% separate attempts, program will send them to %PARENT%badfiles...
+DIR /b "%PARENT%error\*.swf">CON
+REM Lines for *.hack.swf for futureproofing 
+FOR /f "tokens=1 delims=." %%g IN ('DIR /b /a:-d "%PARENT%error\*.swf"') DO (
+	MOVE /y "%PARENT%error\%%g.swf" "%PARENT%badfiles"
+	REM MOVE /y "%PARENT%error\%%g.hack.swf" "%PARENT%badfiles"
+	DEL /q "%PARENT%\%%g.swf"
+	REM DEL /q "%PARENT%\%%g.hack.swf"
+)
+GOTO:EOF
