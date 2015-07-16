@@ -3,12 +3,14 @@ SETLOCAL
 SET ME=%~n0
 SET PARENT=%~dp0
 
+ECHO Running %ME%
+
 ECHO Performing self-tests, please wait...>con
 MKDIR temp
 CD bin
 
 ECHO Testing ffdec..>con
-java -jar "%PARENT%bin\ffdec\ffdec.jar" --help
+java -jar "%PARENT%bin\ffdec\ffdec.jar" --help > nul
 if %errorlevel% neq 0 GOTO FFDEC_FAIL
 
 ECHO Testing ImageMagick...>con

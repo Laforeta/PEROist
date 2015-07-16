@@ -2,6 +2,8 @@ SETLOCAL ENABLEDELAYEDEXPANSION ENABLEEXTENSIONS
 SET ME=%~n0
 SET PARENT=%~dp0
 
+ECHO Running %ME%
+
 ECHO ----------------->CON
 ECHO Replacement Start>CON
 ECHO ----------------->CON

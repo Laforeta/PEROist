@@ -23,7 +23,7 @@ FOR /F %%f in ('type data\modules') DO (
 )
 
 ECHO Testing modules...
-CALL SELFTEST > selftest.log 2>&1
+CALL SELFTEST >> selftest.log 2>&1
 if %errorlevel% neq 0 GOTO SELFCHECK_FAIL
 
 SET /a RETRY_COUNTER=0
@@ -35,33 +35,36 @@ IF NOT EXIST *.swf (
 	GOTO NORMAL_EXIT
 ) ELSE IF %RETRY_COUNTER% gtr %RETRY_LIMIT% (
 	SET /a RETRY_COUNTER+=1
-	CALL :FLUSH_ERROR
+	CALL :FLUSH_ERROR >> export.log
 	SET /a RETRY_COUNTER=0
 	GOTO AUTOPROCESS
 ) ELSE IF EXIST "%PARENT%error\*.swf" (
 	SET /a RETRY_COUNTER+=1
 	MOVE /y "%PARENT%error\*.swf" "%PARENT%"
 	ECHO Importing files...
-	CALL IMPORT > import.log 2>&1
-	CALL EXTRACT > extract.log 2>&1
-	CALL SCALE 2> scale.log
-	CALL REPLACE > replace.log 2>&1
-	CALL EXPORT > export.log 2>&1
+	CALL IMPORT >> import.log 2>&1
+	CALL EXTRACT >> extract.log 2>&1
+	CALL SCALE 2>> scale.log
+	CALL REPLACE >> replace.log 2>&1
+	CALL EXPORT >> export.log 2>&1
 	GOTO AUTOPROCESS
 ) ELSE (
 	ECHO Importing files...
-	CALL IMPORT > import.log 2>&1
-	CALL EXTRACT > extract.log 2>&1
-	CALL SCALE 2> scale.log
-	CALL REPLACE > replace.log 2>&1
-	CALL EXPORT > export.log 2>&1
+	CALL IMPORT >> import.log 2>&1
+	CALL EXTRACT >> extract.log 2>&1
+	CALL SCALE 2>> scale.log
+	CALL REPLACE >> replace.log 2>&1
+	CALL EXPORT >> export.log 2>&1
 	GOTO AUTOPROCESS
 )
 
 :NORMAL_EXIT
 CD %PARENT%
-ECHO Saving log to log_lastrun.txt...
-COPY selftest.log + import.log + extract.log + scale.log + replace.log log_lastrun.txt > nul 2>&1
+bin\doff.exe > time.date
+set /p TIMESTAMP=<time.date
+DEL /q time.date
+ECHO Saving log to log_%TIMESTAMP%.txt...
+COPY selftest.log + import.log + extract.log + scale.log + replace.log log_%TIMESTAMP%.txt > nul 2>&1
 ECHO Removing temporary files...
 CALL CLEANUP > nul 2>&1
 ENDLOCAL
@@ -81,6 +84,7 @@ EXIT /B 1
 
 :FLUSH_ERROR
 ECHO The following files have failed after %RETRY_LIMIT% separate attempts, program will send them to %PARENT%badfiles...
+ECHO The following files have failed after %RETRY_LIMIT% separate attempts, program will send them to %PARENT%badfiles...>CON
 DIR /b "%PARENT%error\*.swf">CON
 REM Lines for *.hack.swf for futureproofing 
 FOR /f "tokens=1 delims=." %%g IN ('DIR /b /a:-d "%PARENT%error\*.swf"') DO (

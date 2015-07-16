@@ -3,6 +3,8 @@ SETLOCAL ENABLEDELAYEDEXPANSION ENABLEEXTENSIONS
 SET ME=%~n0
 SET PARENT=%~dp0
 
+ECHO Running %ME%
+
 REM Scale images (Kanmusu #1,3,5,7,17,19,27,29; Abyssal #1 and #3)
 REM Waifu2x-cpp does not support RGBA mode png transparency (Kanmusu #17 and #19, abyssal #3)
 REM Thus these images are split into alpha and RGB files to be processed separately and merged later
@@ -23,7 +25,7 @@ IF %AMD64% neq 0 (
 	SET WAIFU2X="%PARENT%bin\x86\waifu2x-converter_x86.exe"
 )
 
-REM YCbCr model seems to be marginally faster than RGB model when running on CPU (?)
+REM Do we really need YCbCr models? They are not any faster with GPU
 IF %GPU_FLAG% neq 0 (
 	SET MODEL=--model_dir "%PARENT%\bin\models_rgb"
 ) ELSE ( 
