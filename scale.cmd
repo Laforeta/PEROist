@@ -1,4 +1,4 @@
-@ECHO OFF
+REM @ECHO OFF
 SETLOCAL ENABLEDELAYEDEXPANSION ENABLEEXTENSIONS
 SET ME=%~n0
 SET PARENT=%~dp0
@@ -13,14 +13,28 @@ ECHO ------------->CON
 ECHO Scaling Start>CON
 ECHO ------------->CON
 
-REM Establish working path - waifu2x-cpp seems to have trouble finding the models without doing this
-CD "%PARENT%\bin"
-SET WAIFU2X=waifu2x-converter.exe
+REM These processes depend on being inside the right working directory to run
+REM Binaries must be called as variables using their full path
+SET IM="%PARENT%bin\convert.exe"
+SET /a GPU_FLAG=0
+IF %AMD64% neq 0 (
+	SET WAIFU2X="%PARENT%bin\x64\waifu2x-converter_x64.exe"
+) ELSE (
+	SET WAIFU2X="%PARENT%bin\x86\waifu2x-converter_x86.exe"
+)
+
+REM YCbCr model seems to be marginally faster than RGB model when running on CPU (?)
+IF %GPU_FLAG% neq 0 (
+	SET MODEL=--model_dir "%PARENT%\bin\models_rgb"
+) ELSE ( 
+	SET MODEL=--model_dir "%PARENT%\bin\models_ycbcr" --disable-gpu
+)
 
 REM Merged scale routines for KANMUSU
 FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\kanmusu\*.swf"') DO (
 	SETLOCAL ENABLEDELAYEDEXPANSION
 	SET "FILENAME=%%g"
+	CD "%%g_images"
 	SET /a TARGET=1
 	CALL :SCALE
 	SET /a TARGET=3
@@ -40,18 +54,19 @@ FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\kanmusu\*.swf"') DO (
 	ENDLOCAL
 )
 
-REM Add a loop for EXCEPTION when it's done
-
 REM Merged scale routines for ABYSSAL
 FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\abyssal\*.swf"') DO (
 	SETLOCAL ENABLEDELAYEDEXPANSION
 	SET "FILENAME=%%g"
+	CD "%%g_images"
 	SET /a TARGET=1
 	CALL :SCALE
 	SET /a TARGET=3
 	CALL :SCALE_ALPHA
 	ENDLOCAL
 )
+
+REM Add a loop with trim for premodded files when it's done
 
 ENDLOCAL
 ECHO ------------>CON
@@ -68,21 +83,21 @@ EXIT /B 1
 :SCALE
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
 ECHO Generating Scaled Image %TARGET% in %FILENAME%
-%WAIFU2X% -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%.png" -o "%FILENAME%_images\2x%TARGET%.png"
+%WAIFU2X% %MODEL% -m noise_scale --noise_level 1 -i %TARGET%.png -o 2x%TARGET%.png
 GOTO:EOF
 
 :SCALE_ALPHA
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
 ECHO Processing Alpha of Image %TARGET% in %FILENAME%...
-convert "%FILENAME%_images\%TARGET%.png" -channel alpha -separate "%FILENAME%_images\%TARGET%_alpha.png"
+%IM% %TARGET%.png -channel alpha -separate %TARGET%_alpha.png
 ECHO Processing RGB of Image %TARGET% in %FILENAME%...
-convert "%FILENAME%_images\%TARGET%.png" -channel alpha -threshold 100%% +channel "%FILENAME%_images\%TARGET%_rgb.png"
+%IM% %TARGET%.png -channel alpha -threshold 100%% +channel %TARGET%_rgb.png
 ECHO Generating Scaled RGB for Image %TARGET% in %FILENAME%...
-%WAIFU2X% -m noise_scale --noise_level 1 -i "%FILENAME%_images\%TARGET%_rgb.png" -o "%FILENAME%_images\2x%TARGET%_rgb.png"
+%WAIFU2X% %MODEL% -m noise_scale --noise_level 1 -i %TARGET%_rgb.png -o 2x%TARGET%_rgb.png
 ECHO Generating Scaled alpha for Image %TARGET% in %FILENAME%...
-%WAIFU2X% -m scale -i "%FILENAME%_images\%TARGET%_alpha.png" -o "%FILENAME%_images\2x%TARGET%_alpha.png"
+%WAIFU2X% %MODEL% -m scale -i %TARGET%_alpha.png -o 2x%TARGET%_alpha.png
 ECHO Combining RGB with Alpha for Image %TARGET% in %FILENAME%...
-convert "%FILENAME%_images\2x%TARGET%_rgb.png" "%FILENAME%_images\2x%TARGET%_alpha.png" -alpha off -compose CopyOpacity -composite PNG32:"%FILENAME%_images\2x%TARGET%.png"
+%IM% 2x%TARGET%_rgb.png 2x%TARGET%_alpha.png -alpha off -compose CopyOpacity -composite PNG32:2x%TARGET%.png
 GOTO:EOF
 
 :SHARPEN
