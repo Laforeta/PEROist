@@ -17,6 +17,13 @@ ECHO Testing ImageMagick...>con
 convert "%PARENT%\data\selftest.gif" "%PARENT%temp\selftest.png"
 if %errorlevel% neq 0 GOTO IM_FAIL
 
+ECHO Detecting system architecture...
+IF EXIST "%SYSTEMROOT%\SysWOW64" (
+   SET AMD64=1
+) ELSE (
+   SET AMD64=0
+)
+
 ECHO Testing Waifu2x...>con
 CD "%PARENT%temp"
 IF %AMD64% neq 0 (

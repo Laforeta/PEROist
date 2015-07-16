@@ -18,7 +18,8 @@ ECHO ------------->CON
 REM These processes depend on being inside the right working directory to run
 REM Binaries must be called as variables using their full path
 SET IM="%PARENT%bin\convert.exe"
-SET /a GPU_FLAG=0
+REM Disable GPU by setting the GPU_FLAG value to 0
+SET /a GPU_FLAG=1
 IF %AMD64% neq 0 (
 	SET WAIFU2X="%PARENT%bin\x64\waifu2x-converter_x64.exe"
 ) ELSE (
