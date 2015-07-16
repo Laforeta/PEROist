@@ -37,6 +37,7 @@ IF NOT EXIST *.swf (
 	MOVE /y "%PARENT%*.swf" "%PARENT%error"
 	DIR /b "%PARENT%error\*.swf"
 	GOTO NORMAL_EXIT
+	GOTO AUTOPROCESS
 ) ELSE (
 	ECHO Importing files...
 	CALL IMPORT > import.log 2>&1
