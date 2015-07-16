@@ -8,6 +8,7 @@ FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\kanmusu\*.hack.sw
 	ECHO Exporting %%g.hack.swf...
 	MOVE /y "%PARENT%temp\kanmusu\%%g.hack.swf" "%PARENT%output"
 	DEL /q "%PARENT%temp\kanmusu\%%g.swf"
+	DEL /q "%PARENT%\%%g.swf"
 )
 MOVE /y "%PARENT%temp\kanmusu\*.swf" "%PARENT%error"
 
@@ -15,8 +16,8 @@ FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\abyssal\*.hack.sw
 	ECHO Exporting %%g.hack.swf...
 	MOVE /y "%PARENT%temp\abyssal\%%g.hack.swf" "%PARENT%output"
 	DEL /q "%PARENT%temp\abyssal\%%g.swf"
+	DEL /q "%PARENT%\%%g.swf"
 )
 MOVE /y "%PARENT%temp\abyssal\*.swf" "%PARENT%error"
 
-DEL /q "%PARENT%temp\*.swf"
 ENDLOCAL

@@ -13,8 +13,9 @@ MKDIR "%PARENT%temp\abyssal"
 MKDIR "%PARENT%temp\kanmusu"
 SET BLOCKSIZE=5
 FOR /F "tokens=1* delims=[]" %%g in ('DIR /A-D /B *.swf ^|find /v /n ""') DO (
-	MOVE "%%~nxh" "%PARENT%temp"
+	COPY /y "%%~nxh" "%PARENT%temp"
 	ECHO Importing file %%g of %BLOCKSIZE%...
+	ECHO Importing file %%g of %BLOCKSIZE%...>CON
 	if %%g==%BLOCKSIZE% GOTO SORTING
 )
 
@@ -38,6 +39,9 @@ For %%f in (*.swf) DO (
 	)
 	DEL /q "%PARENT%temp\*.png"
 )
+
+REM Remove files in staging area after sorting
+DEL /q "%PARENT%temp\*.swf"
 
 ENDLOCAL
 EXIT /B 0
