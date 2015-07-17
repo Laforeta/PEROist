@@ -18,13 +18,18 @@ ECHO ------------->CON
 REM These processes depend on being inside the right working directory to run
 REM Binaries must be called as variables using their full path
 SET IM="%PARENT%bin\convert.exe"
-REM Disable GPU by setting the GPU_FLAG value to 0
-SET /a GPU_FLAG=1
+
+IF NOT DEFINED AMD64 SET /a AMD64=1
+
 IF %AMD64% neq 0 (
 	SET WAIFU2X="%PARENT%bin\x64\waifu2x-converter_x64.exe"
 ) ELSE (
 	SET WAIFU2X="%PARENT%bin\x86\waifu2x-converter_x86.exe"
 )
+
+REM Disable GPU by setting the GPU_FLAG value to 0
+REM SET GPU_FLAG=0
+IF NOT DEFINED GPU_FLAG SET /a GPU_FLAG=1
 
 IF %GPU_FLAG% neq 0 (
 	SET MODEL=--model_dir "%PARENT%\bin\models_rgb"
@@ -45,9 +50,23 @@ FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\kanmusu\*.swf"') DO (
 	CALL :SCALE
 	SET /a TARGET=7
 	CALL :SCALE
+	SET /a TARGET=9
+	CALL :SCALE_ALPHA
+	SET /a TARGET=11
+	CALL :SCALE_ALPHA
+	SET /a TARGET=13
+	CALL :SCALE_ALPHA
+	SET /a TARGET=15
+	CALL :SCALE_ALPHA
 	SET /a TARGET=17
 	CALL :SCALE_ALPHA
 	SET /a TARGET=19
+	CALL :SCALE_ALPHA
+	SET /a TARGET=21
+	CALL :SCALE_ALPHA
+	SET /a TARGET=23
+	CALL :SCALE_ALPHA
+	SET /a TARGET=25
 	CALL :SCALE_ALPHA
 	SET /a TARGET=27
 	CALL :SCALE_ALPHA
@@ -68,19 +87,61 @@ FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\abyssal\*.swf"') DO (
 	ENDLOCAL
 )
 
-REM Add a loop with trim for premodded files when it's done
+REM Merged scale routines for KANMUSU_MOD
+FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\kanmusu_mod\*.swf"') DO (
+	SETLOCAL ENABLEDELAYEDEXPANSION
+	SET "FILENAME=%%g"
+	CD "%%g_images"
+	SET /a TARGET=1
+	CALL :SCALE
+	SET /a TARGET=3
+	CALL :SCALE
+	SET /a TARGET=5
+	CALL :SCALE
+	SET /a TARGET=7
+	CALL :SCALE
+	SET /a TARGET=9
+	CALL :SCALE_ALPHA
+	SET /a TARGET=11
+	CALL :SCALE_ALPHA
+	SET /a TARGET=13
+	CALL :SCALE_ALPHA
+	SET /a TARGET=15
+	CALL :SCALE_ALPHA
+	SET /a TARGET=17
+	CALL :SCALE_ALPHA
+	SET /a TARGET=19
+	CALL :SCALE_ALPHA
+	SET /a TARGET=21
+	CALL :SCALE_ALPHA
+	SET /a TARGET=23
+	CALL :SCALE_ALPHA
+	SET /a TARGET=25
+	CALL :SCALE_ALPHA
+	SET /a TARGET=27
+	CALL :SCALE_ALPHA
+	SET /a TARGET=29
+	CALL :SCALE_ALPHA
+	ENDLOCAL
+)
+
+REM Merged scale routines for ABYSSAL_MOD
+FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\abyssal_mod\*.swf"') DO (
+	SETLOCAL ENABLEDELAYEDEXPANSION
+	SET "FILENAME=%%g"
+	CD "%%g_images"
+	SET /a TARGET=1
+	CALL :SCALE
+	SET /a TARGET=3
+	CALL :SCALE_ALPHA
+	ENDLOCAL
+)
 
 ENDLOCAL
 ECHO ------------>CON
 ECHO Scaling Done>CON
 ECHO ------------>CON
 EXIT /B 0
-
-REM Is this still needed? 
-ECHO -------------->CON
-ECHO Scaling FAILED>CON
-ECHO -------------->CON
-EXIT /B 1
 
 :SCALE
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
@@ -105,6 +166,3 @@ GOTO:EOF
 :SHARPEN
 ECHO Adding some finishing touches to %TARGET% in %FILENAME%>CON
 GOTO:EOF
-
-:TRIM
-ECHO Removing whitespace in the border
