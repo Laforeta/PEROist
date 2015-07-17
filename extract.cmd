@@ -31,8 +31,8 @@ FOR %%f IN (*.swf) DO (
 	ECHO Extracting images in %%f>CON
 	ECHO Extracting images in %%f
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%%f_images" "%%f"
-	IF NOT EXIST %%f_images\3.png ECHO Primary extraction method failed, switching to backup method && SET "FILENAME=%%f"&& CALL :FORCE_EXTRACT
-	IF NOT EXIST %%f_images\3.png ECHO Backup extraction method failed for %%f. Skipping this file...
+	IF NOT EXIST %%f_images\17.png ECHO Primary extraction method failed, switching to backup method && SET "FILENAME=%%f"&& CALL :FORCE_EXTRACT
+	IF NOT EXIST %%f_images\17.png ECHO Backup extraction method failed for %%f. Skipping this file...
 )
 
 REM Export kanmusu mod pack
@@ -41,8 +41,8 @@ FOR %%f IN (*.swf) DO (
 	ECHO Extracting images in %%f>CON
 	ECHO Extracting images in %%f
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%%f_images" "%%f"
-	IF NOT EXIST %%f_images\17.png ECHO Primary extraction method failed for %%f, switching to laternative... && SET "FILENAME=%%f"&& CALL :FORCE_EXTRACT
-	IF NOT EXIST %%f_images\17.png ECHO Backup extraction method failed for %%f. Skipping this file...
+	IF NOT EXIST %%f_images\3.png ECHO Primary extraction method failed for %%f, switching to laternative... && SET "FILENAME=%%f"&& CALL :FORCE_EXTRACT
+	IF NOT EXIST %%f_images\3.png ECHO Backup extraction method failed for %%f. Skipping this file...
 )
 
 ENDLOCAL
