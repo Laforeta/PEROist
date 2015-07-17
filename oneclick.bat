@@ -8,6 +8,7 @@ CALL CLEANUP > nul 2>&1
 MKDIR temp
 MKDIR output
 MKDIR badfiles
+MKDIR error
 REM Temporarily use this to stop .hack.swf from messing up input queue 
 MOVE /y *.hack.swf "%PARENT%output"
 
