@@ -18,6 +18,7 @@ ECHO ------------->CON
 REM These processes depend on being inside the right working directory to run
 REM Binaries must be called as variables using their full path
 SET IM="%PARENT%bin\convert.exe"
+IF NOT DEFINED JPEG_QUALITY SET /a JPEG_QUALITY=92
 
 IF NOT DEFINED AMD64 SET /a AMD64=1
 
@@ -157,10 +158,10 @@ ECHO Processing RGB of Image %TARGET% in %FILENAME%...
 %IM% %TARGET%.png -channel alpha -threshold 100%% +channel %TARGET%_rgb.png
 ECHO Generating Scaled RGB for Image %TARGET% in %FILENAME%...
 %WAIFU2X% %MODEL% -m noise_scale --noise_level 1 -i %TARGET%_rgb.png -o 2x%TARGET%_rgb.png
+ECHO Converting Scaled RGB for Image %TARGET% in %FILENAME% to JPEG bitmap...
+%IM% -quality %JPEG_QUALITY% 2x%TARGET%_rgb.png 2x%TARGET%.jpg
 ECHO Generating Scaled alpha for Image %TARGET% in %FILENAME%...
 %WAIFU2X% %MODEL% -m scale -i %TARGET%_alpha.png -o 2x%TARGET%_alpha.png
-ECHO Combining RGB with Alpha for Image %TARGET% in %FILENAME%...
-%IM% 2x%TARGET%_rgb.png 2x%TARGET%_alpha.png -alpha off -compose CopyOpacity -composite PNG32:2x%TARGET%.png
 GOTO:EOF
 
 :SHARPEN
