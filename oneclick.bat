@@ -9,8 +9,6 @@ MKDIR temp
 MKDIR output
 MKDIR badfiles
 MKDIR error
-REM Temporarily use this to stop .hack.swf from messing up input queue 
-MOVE /y *.hack.swf "%PARENT%output"
 
 REM Detect whether the program runs on 64-bit OS by the existence of SysWOW64 folder.
 ECHO Detecting system architecture...
