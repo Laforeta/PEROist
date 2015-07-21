@@ -148,6 +148,8 @@ EXIT /B 0
 ECHO Generating Scaled Image %TARGET% in %FILENAME%>CON
 ECHO Generating Scaled Image %TARGET% in %FILENAME%
 %WAIFU2X% %MODEL% -m noise_scale --noise_level 1 -i %TARGET%.png -o 2x%TARGET%.png
+ECHO Converting Scaled RGB for Image %TARGET% in %FILENAME% to JPEG bitmap...
+%IM% -quality %JPEG_QUALITY% 2x%TARGET%.png 2x%TARGET%.jpg
 GOTO:EOF
 
 :SCALE_ALPHA
