@@ -65,7 +65,7 @@ bin\doff.exe > time.date
 set /p TIMESTAMP=<time.date
 DEL /q time.date
 ECHO Saving log to log_%TIMESTAMP%.txt...
-COPY selftest.log + import.log + extract.log + scale.log + replace.log log_%TIMESTAMP%.txt > nul 2>&1
+COPY selftest.log + import.log + extract.log + scale.log + replace.log + export.log log_%TIMESTAMP%.txt > nul 2>&1
 ECHO Removing temporary files...
 CALL CLEANUP > nul 2>&1
 ENDLOCAL
