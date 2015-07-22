@@ -33,15 +33,20 @@ REN *hack.swf *hack
 
 For %%f in (*.swf) DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 1 -export image "%PARENT%temp" "%%f"
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 11 -export image "%PARENT%temp" "%%f"
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 17 -export image "%PARENT%temp" "%%f"
 	IF NOT EXIST "%PARENT%temp\1.png" (
 		ECHO Failed to detect file type of %%f, skipping this file...>con
 		ECHO Failed to detect file type of %%f, skipping this file...
 		COPY "%%f" "%PARENT%error\"
-	) ELSE IF NOT EXIST "%PARENT%temp\17.png" (
+	) ELSE IF NOT EXIST "%PARENT%temp\11.png" (
 		ECHO %%f is an ABYSSAL STOCK sprite pack>con
 		ECHO %%f is an ABYSSAL STOCK sprite pack
 		COPY "%%f" "%PARENT%temp\abyssal\"
+	) ELSE IF NOT EXIST "%PARENT%temp\17.png" (
+		ECHO %%f is a KANMUSU SPECIAL sprite pack and not supported at the time>con
+		ECHO %%f is a KANMUSU SPECIAL sprite pack and not supported at the time
+		MOVE /y "%%f" "%PARENT%error\"
 	) ELSE (
 		ECHO %%f is a KANMUSU STOCK sprite pack>con
 		ECHO %%f is a KANMUSU STOCK sprite pack
