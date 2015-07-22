@@ -27,9 +27,9 @@ CD "%PARENT%temp\abyssal"
 FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\abyssal\*.swf"') DO (
 	ECHO Replacing images in %%f...>CON
 	ECHO Replacing images in %%f...
-	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replace "%%f" "%%f_images\2x%%f" 2 "%%f_images\2x1.jpg" 4 "%%f_images\2x3.jpg"
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replace "%%f" "%%f_images\2x%%f" 2 "%%f_images\2x1.jpg" jpeg3 4 "%%f_images\2x3.jpg" jpeg3
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replaceAlpha "%%f_images\2x%%f" "%%f_images\debloat_%%f" 6 "%%f_images\2x3.bin" 
-	java -jar "%PARENT%bin\ffdec\ffdec.jar" -removeCharacterwithdependencies "%%f_images\debloat_%%f" "%%f_images\unregularised_%%fh" 1 3
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -removeCharacterwithdependencies "%%f_images\debloat_%%f" "%%f_images\unregularised_%%f" 1 3
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replaceCharacterId "%%f_images\unregularised_%%f" "%%fh" 5,1,6,3
 )
 REN *.swfh *.hack.swf
@@ -53,9 +53,9 @@ CD "%PARENT%temp\abyssal_mod"
 FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\abyssal_mod\*.swf"') DO (
 	ECHO Replacing images in %%f...>CON
 	ECHO Replacing images in %%f...
-	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replace "%%f" "%%f_images\2x%%f" 2 "%%f_images\2x1.jpg" 4 "%%f_images\2x3.jpg"
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replace "%%f" "%%f_images\2x%%f" 2 "%%f_images\2x1.jpg" jpeg3 4 "%%f_images\2x3.jpg" jpeg3
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replaceAlpha "%%f_images\2x%%f" "%%f_images\debloat_%%f" 6 "%%f_images\2x3.bin" 
-	java -jar "%PARENT%bin\ffdec\ffdec.jar" -removeCharacterwithdependencies "%%f_images\debloat_%%f" "%%f_images\unregularised_%%fh" 1 3
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -removeCharacterwithdependencies "%%f_images\debloat_%%f" "%%f_images\unregularised_%%f" 1 3
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replaceCharacterId "%%f_images\unregularised_%%f" "%%fh" 5,1,6,3
 )
 REN *.swfh *.swf
