@@ -28,24 +28,8 @@ REM The mod detection will NOT work if mod files have mismatching tags (PNG imag
 REM Should I just upgrade the whole thing to swfextract? Not that it is less error prone
 REM Check ONECLICK and see if it is redirecting .hack.swf files elsewhere
 CD temp
-For %%f in (*.hack.swf) DO (
-	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 1 -export image "%PARENT%temp" "%%f"
-	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 17 -export image "%PARENT%temp" "%%f"
-	IF NOT EXIST "%PARENT%temp\1.png" (
-		ECHO Failed to detect file type of %%f, skipping this file...>con
-		ECHO Failed to detect file type of %%f, skipping this file...
-		COPY "%%f" "%PARENT%error\"
-	) ELSE IF NOT EXIST "%PARENT%temp\17.png" (
-		ECHO %%f is an ABYSSAL MOD sprite pack>con
-		ECHO %%f is an ABYSSAL MOD sprite pack
-		COPY "%%f" "%PARENT%temp\abyssal_mod\"
-	) ELSE (
-		ECHO %%f is a KANMUSU MOD sprite pack>con
-		ECHO %%f is a KANMUSU MOD sprite pack
-		COPY "%%f" "%PARENT%temp\kanmusu_mod\"
-	)
-	DEL /q "%PARENT%temp\*.png"
-)
+REM Rename *.hack.swf to *.hack to isolate two streams
+REN *hack.swf *hack
 
 For %%f in (*.swf) DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 1 -export image "%PARENT%temp" "%%f"
@@ -66,8 +50,31 @@ For %%f in (*.swf) DO (
 	DEL /q "%PARENT%temp\*.png"
 )
 
+For %%f in (*.hack) DO (
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 1 -export image "%PARENT%temp" "%%f"
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 17 -export image "%PARENT%temp" "%%f"
+	IF NOT EXIST "%PARENT%temp\1.png" (
+		ECHO Failed to detect file type of %%f, skipping this file...>con
+		ECHO Failed to detect file type of %%f, skipping this file...
+		REN "%%f" "%%f.swf"
+		COPY "%%f.swf" "%PARENT%error\"
+	) ELSE IF NOT EXIST "%PARENT%temp\17.png" (
+		ECHO %%f is an ABYSSAL MOD sprite pack>con
+		ECHO %%f is an ABYSSAL MOD sprite pack
+		REN "%%f" "%%f.swf"
+		COPY "%%f.swf" "%PARENT%temp\abyssal_mod\"
+	) ELSE (
+		ECHO %%f is a KANMUSU MOD sprite pack>con
+		ECHO %%f is a KANMUSU MOD sprite pack
+		REN "%%f" "%%f.swf"
+		COPY "%%f.swf" "%PARENT%temp\kanmusu_mod\"
+	)
+	DEL /q "%PARENT%temp\*.png"
+)
+
 REM Remove files in staging area after sorting
 DEL /q "%PARENT%temp\*.swf"
+DEL /q "%PARENT%temp\*.hack"
 
 ENDLOCAL
 EXIT /B 0

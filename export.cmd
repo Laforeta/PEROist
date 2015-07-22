@@ -21,20 +21,23 @@ FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\abyssal\*.hack.sw
 )
 MOVE /y "%PARENT%temp\abyssal\*.swf" "%PARENT%error"
 
-FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\kanmusu_mod\*.hack.swf"') DO (
+FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\abyssal_mod\*.hack.swf"') DO (
 	ECHO Exporting %%g.hack.swf...
-	MOVE /y "%PARENT%temp\kanmusu\%%g.hack.swf" "%PARENT%output"
-	DEL /q "%PARENT%temp\kanmusu\%%g.hack.swf"
+	MOVE /y "%PARENT%temp\abyssal_mod\%%g.hack.out" "%PARENT%output"
+	DEL /q "%PARENT%temp\abyssal_mod\%%g.hack.out"
 	DEL /q "%PARENT%\%%g.hack.swf"
 )
-MOVE /y "%PARENT%temp\kanmusu\*.swf" "%PARENT%error"
+MOVE /y "%PARENT%temp\kanmusu_mod\*.swf" "%PARENT%error"
 
 FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\abyssal_mod\*.hack.swf"') DO (
 	ECHO Exporting %%g.hack.swf...
-	MOVE /y "%PARENT%temp\kanmusu\%%g.hack.swf" "%PARENT%output"
-	DEL /q "%PARENT%temp\kanmusu\%%g.hack.swf"
+	MOVE /y "%PARENT%temp\abyssal_mod\%%g.hack.out" "%PARENT%output"
+	DEL /q "%PARENT%temp\abyssal_mod\%%g.hack.out"
 	DEL /q "%PARENT%\%%g.hack.swf"
 )
-MOVE /y "%PARENT%temp\kanmusu\*.swf" "%PARENT%error"
+MOVE /y "%PARENT%temp\abyssal_mod\*.swf" "%PARENT%error"
+
+CD %PARENT%output
+REN *.out *.swf
 
 ENDLOCAL

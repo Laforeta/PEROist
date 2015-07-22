@@ -46,7 +46,7 @@ FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\kanmusu_mod\*.swf"') DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -removeCharacterwithdependencies "%%f_images\full_alpha_lite_alpha_%%f" "%%f_images\unregularised_%%f" 1 3 5 7 9 11 13 15 17 19 21 23 25 27 29
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replaceCharacterId "%%f_images\unregularised_%%f" "%%fh" 31,1,32,3,33,5,34,7,39,9,40,11,41,13,42,15,35,17,36,19,43,21,44,23,45,25,37,27,38,29
 )
-REN *.swfh *.swf
+REN *.swfh *.out
 
 :REPLACE_ABYSSAL_MOD
 CD "%PARENT%temp\abyssal_mod"
@@ -58,7 +58,7 @@ FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\abyssal_mod\*.swf"') DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -removeCharacterwithdependencies "%%f_images\debloat_%%f" "%%f_images\unregularised_%%f" 1 3
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -replaceCharacterId "%%f_images\unregularised_%%f" "%%fh" 5,1,6,3
 )
-REN *.swfh *.swf
+REN *.swfh *.out
 
 
 ENDLOCAL
