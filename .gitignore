@@ -6,6 +6,7 @@ Thumbs.db
 *.png
 *.jpg
 *.swf
+*.out
 /build/
 /kcs/
 /scrap/
@@ -13,5 +14,6 @@ Thumbs.db
 /src/
 /bin_dev/
 /bin_release/
+/input/
 /output/
 /badfiles/
