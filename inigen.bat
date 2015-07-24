@@ -4,13 +4,22 @@ SET ME=%~n0
 SET PARENT=%~dp0
 @ECHO Running %ME%
 
+REM Progress:
+REM Single file loader: Working
+REM Multi file loader: Not started
+REM Interactive Menu: Working
+REM Preview: Working
+REM redefine offset: WORKING
+REM Write config to file: NOT WORKING
+REM Logging: NOT Working
+
 REM Set up the environment
 SET IM="%PARENT%bin\convert.exe"
 SET STREAM="%PARENT%bin\stream.exe"
 IF NOT DEFINED JPEG_QUALITY SET /a JPEG_QUALITY=92
 
 REM Prepare folders if not already presen
-REM CALL CLEANUP
+CALL CLEANUP.cmd
 MKDIR temp 2>nul
 MKDIR input 2>nul
 MKDIR output 2>nul
@@ -18,20 +27,26 @@ MKDIR output 2>nul
 REM Load sprite and extract image to generate preview
 REM COPY operation somehow not working
 CD input
-FOR /f "tokens=1 delims=" %%G IN ('DIR /b *.swf') DO (
-	ECHO Found sprite pack %%G, analysing file....
-	ECHO COPY *.* "%%PARENT%%temp\"
-	ECHO java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g_images" "%%g"
-	SET FILENAME=<%%G
-	ECHO Filename is %FILENAME%
+FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
+	ECHO Found mod file %%g, analysing file....
+	COPY "%%g.hack.swf" "%%PARENT%%temp"
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
+	SET FILENAME=%%g
+	ECHO Filename is !FILENAME!
 )
 
-CD %PARENT%temp
-REM IF NOT EXIST *.swf ECHO No mod packs found, generator will now quit. && GOTO EXIT
+IF NOT EXIST *.hack.swf (
+	ECHO No mod packs found, generator will now quit
+	PAUSE
+	GOTO EXIT
+) ELSE ( 
+	ECHO Finished reading list of files, initialising generator...
+	CD %PARENT%temp
+)
 
 REM Add the ability to parse api_start and existing file later, for now use an approximate starting value
 :INIT
-IF EXIST api_start2.json (
+IF EXIST GraphList.txt (
 	ECHO Parsing api_start2...
 ) ELSE IF EXIST config.ini (
 	ECHO Loading current config file...
@@ -44,8 +59,6 @@ IF EXIST api_start2.json (
 	SET /a boko_n_top=128
 )
 
-PAUSE
-
 :MENU
 @ECHO OFF
 CLS
@@ -54,48 +67,47 @@ ECHO 			############################
 ECHO 			PEROist config.ini Generator
 ECHO 			############################
 ECHO.
-ECHO 1 - Display current offsets          6 - Unused
-ECHO 2 - Preview boko_d                   7 - Unused
-ECHO 3 - Set boko_d                       8 - Write current values to config.ini
-ECHO 4 - Preview boko_n                   9 - Reset all input
-ECHO 5 - Set boko_n                       0 - Quite generator
+ECHO 1 - Display current offsets         6 - X
+ECHO 2 - Adjust offsets boko_d           7 - X
+ECHO 3 - Adjust offsets boko_n           8 - Write %FILENAME%.config.ini
+ECHO 4 - Adjust offsets battle_d         9 - Reset all input
+ECHO 5 - Adjust offsets battle_n         0 - Quit generator
 ECHO.
-
-SET OPTION=
-SET /P OPTION=Choose from one of the options above and press enter:
-IF %OPTION%==1 (
-	CALL :DISPLAY_VALUES
-) ELSE IF %OPTION%==2 (
-	SET BACKGROUND="%PARENT%data\room.png"
-	SET SPRITE=""%PARENT%data\arrow.gif"
+ECHO Choose from one of the options above and press enter:
+SET "OPTION="
+SET /p OPTION=[1,2,3,4,5,6,7,8,9,0]
+IF /i '%OPTION%'=='1' (
+	GOTO DISPLAY
+) ELSE IF /i '%OPTION%'=='2' (
+	SET BACKGROUND="%PARENT%data\room.gif"
+	SET SPRITE="%PARENT%data\arrow.gif"
 	SET /a ORIGIN_X=326
 	SET /a ORIGIN_Y=-19
 	SET /a CURRENT_X=%boko_d_left%
 	SET /a CURRENT_Y=%boko_d_top%
-	CALL :PREVIEW
-) ELSE IF %OPTION%==3 (
-	SET NAME_X=boko_d_left
-	SET NAME_Y=boko_d_top
-	CALL :SET_VALUES
-) ELSE IF %OPTION%==4 (
-	SET BACKGROUND="%PARENT%data\room.png"
-	SET SPRITE=""%PARENT%data\arrow.gif"
+	SET NEW_X=boko_d_left
+	SET NEW_Y=boko_d_top
+	GOTO PROCESS
+) ELSE IF /i '%OPTION%'=='3' (
+	ECHO OPTION %OPTION% selected.
+) ELSE IF /i '%OPTION%'=='4' (
+	ECHO OPTION %OPTION% selected.
+	SET BACKGROUND="%PARENT%data\room.gif"
+	SET SPRITE="%PARENT%data\arrow.gif"
 	SET /a ORIGIN_X=326
 	SET /a ORIGIN_Y=-45
 	SET /a CURRENT_X=%boko_n_left%
-	SET /a CURRENT_Y=%boko_n_left%
-	CALL :PREVIEW
-) ELSE IF %OPTION%==8 (
-	SET NAME_X=boko_n_left
-	SET NAME_Y=boko_n_top
-	CALL :SET_VALUES
-) ELSE IF %OPTION%==8 (
-	CALL :WRITE_FILE
-) ELSE IF %OPTION%==9 (
+	SET /a CURRENT_Y=%boko_n_top%
+	GOTO PROCESS
+) ELSE IF /i '%OPTION%'=='7' (
+	ECHO OPTION %OPTION% selected.
+) ELSE IF /i '%OPTION%'=='8' (
+	GOTO WRITE_INI
+) ELSE IF /i '%OPTION%'=='9' (
+	ECHO OPTION %OPTION% selected.
 	ECHO Reinitialising offset values...
 	GOTO INIT
-) ELSE IF %OPTION%==0 (
-	ECHO The script will now quit
+) ELSE IF /i '%OPTION%'=='0 '(
 	GOTO EXIT
 ) ELSE (
 	ECHO Please choose one valid option from the list
@@ -104,23 +116,29 @@ IF %OPTION%==1 (
 )
 GOTO MENU
 
-:PREVIEW
+:PROCESS
 SET /a ANCHOR_X=%ORIGIN_X%+%CURRENT_X%
 SET /a ANCHOR_Y=%ORIGIN_Y%+%CURRENT_Y%
 ECHO Generating preview based on current values (%CURRENT_X%,%CURRENT_Y%)
-%IM% -composite "port_preview.jpg" -geometry +!ANCHOR_X!+!ANCHOR_Y! !BACKGROUND! !SPRITE!
-iexplore "%PARENT%data\room.png"
+%IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite port_preview.jpg
+START rundll32 "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll", ImageView_Fullscreen %PARENT%temp\port_preview.jpg
+ECHO Are you happy with the results? 
+SET /p ACCEPT=[y/n]
+IF /i %ACCEPT%==y GOTO MENU
+CLS
+ECHO Current %NEW_X% is %CURRENT_X%
+ECHO Please enter a new value for %NEW_X%:
+SET /p !NEW_X!=
+ECHO Current %NEW_Y% is %CURRENT_Y%
+ECHO Please enter a new value for %NEW_Y%:
+SET /p !NEW_Y!=
+ECHO Offset values successfully updated. Press any key to generate a new review.
+SET /a CURRENT_X=%NEW_X%
+SET /a CURRENT_Y=%NEW_Y%
 PAUSE
-GOTO:EOF
+GOTO PROCESS
 
-:SET_VALUES
-ECHO Please enter a new value for %NAME_X%:
-SET /a /p !NAME_X!=
-ECHO Please enter a new value for %NAME_Y%:
-SET /a /p !NAME_Y!=
-GOTO:EOF
-
-:DISPLAY_VALUES
+:DISPLAY
 ECHO Displaying current values
 ECHO ship_name=%ship_name%
 ECHO boko_d_left=%boko_d_left%
@@ -128,21 +146,10 @@ ECHO boko_d_top=%boko_d_top%
 ECHO boko_n_left=%boko_n_left%
 ECHO boko_n_top=%boko_n_top%
 PAUSE
-
-:BATTLE_OFFSET
-
-:MAP_OFFSET
-
-:KAISYU_OFFSET
-
-:KAIZO_OFFSET
-
-:ENSYUF_OFFSET
-
-:WED_OFFSET
+GOTO MENU
 
 REM Writing finalised coordinates to %FILENAME%.config.ini
-:WRITE_FILE
+:WRITE_INI
 @echo [Info]> %FILENAME%.config.ini
 @echo ship_name=%ship_name%>%FILENAME%.config.ini
 @echo boko_d_left=%boko_d_left%>>%FILENAME%.config.ini
@@ -189,5 +196,6 @@ wedb_left=
 wedb_top=
 
 :EXIT
-ENDLOCAL 
+ENDLOCAL
+ECHO Shutting down generator...
 EXIT /b 0
