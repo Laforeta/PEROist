@@ -25,19 +25,24 @@ FOR /F "tokens=1* delims=[]" %%g in ('DIR /A-D /B *.swf ^|find /v /n ""') DO (
 	if %%g==%BLOCKSIZE% GOTO SORTING
 )
 
+
+
 :SORTING
 REM The mod detection will NOT work if mod files have mismatching tags (PNG images with DefineJPEG tags)
 REM Should I just upgrade the whole thing to swfextract? Not that it is less error prone
 REM Check ONECLICK and see if it is redirecting .hack.swf files elsewhere
-CD temp
-REM Rename *.hack.swf to *.hack to isolate two streams
-REN *hack.swf *hack
 
-FOR /f %%f in ('TYPE "%PARENT%data\%_SPECIAL%"') DO
-	ECHO Special file %%f found, redirecting...
-	MOVE /y "%%f" "%PARENT%temp\special\"
+
+CD temp
+
+REM Redirect all SPECIAL files on the list
+FOR /f %%f in ('TYPE "%_SPECIAL%"') DO (
+	MOVE /y "%%f" "%PARENT%temp\special" 2>nul
+	IF %errorlevel% equ 0 ECHO Special file %%f found, redirecting...
 )
 
+REM Rename *.hack.swf to *.hack to isolate two streams
+REN *hack.swf *hack
 For %%f in (*.swf) DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 1 -export image "%PARENT%temp" "%%f"
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 11 -export image "%PARENT%temp" "%%f"

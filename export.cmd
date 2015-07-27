@@ -43,6 +43,7 @@ FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\special\*.hack.sw
 	ECHO Exporting %%g.hack.swf...
 	COPY /y "%PARENT%temp\special\%%g.hack.swf" "%PARENT%output\%%g.hack.swf"
 	DEL /q "%PARENT%temp\special\%%g.hack.swf"
+	DEL /q "%PARENT%\%%g.swf"
 )
 MOVE /y "%PARENT%temp\special\*.swf" "%PARENT%error"
 
