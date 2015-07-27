@@ -143,7 +143,7 @@ REM Initialise image list
 CD "%PARENT%temp\special"
 FOR /f "delims=" %%g IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
 	ECHO Generating image list for %%g
-	DIR /b "%PARENT%temp\%%g_images\*.png" >"%%g_images\%%g_images.txt"
+	DIR /b "%PARENT%temp\special\%%g_images\*.png" >"%%g_images\%%g_images.txt"
 )
 
 REM Merged scale routines for KANMUSU

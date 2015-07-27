@@ -37,6 +37,8 @@ FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\abyssal_mod\*.hac
 )
 MOVE /y "%PARENT%temp\abyssal_mod\*.swf" "%PARENT%error"
 
+CD "%PARENT%temp\special"
+REN *.swf *.hack.swf
 FOR /f "tokens=1 delims=." %%g in ('DIR /A:-D /B "%PARENT%temp\special\*.hack.swf"') DO (
 	ECHO Exporting %%g.hack.swf...
 	COPY /y "%PARENT%temp\special\%%g.hack.swf" "%PARENT%output\%%g.hack.swf"
