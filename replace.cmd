@@ -60,6 +60,20 @@ FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\abyssal_mod\*.swf"') DO (
 )
 REN *.swfh *.out
 
+:REPLACE_SPECIAL_SHAPES
+CD "%PARENT%temp\special"
+FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
+	ECHO Replacing images in %%f...>CON
+	ECHO Replacing images in %%f...
+	SET FILENAME=%%f
+	FOR /f "delims=." %%g IN ('TYPE !FILENAME!_images\special\!Filename!_images.txt') DO (
+		SET /a TARGET=%%g
+		ECHO Inserting Image #%TARGET%...
+		java -jar "%PARENT%bin\ffdec\ffdec.jar" -replace %FILENAME% %FILENAME% %TARGET% "%FILENAME%_images\2x%TARGET%.png"
+	)
+)
+REN *.swf *.hack.swf
+	
 
 ENDLOCAL
 ECHO ---------------->CON

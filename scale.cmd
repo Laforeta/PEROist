@@ -139,6 +139,23 @@ FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\abyssal_mod\*.swf"') DO 
 	ENDLOCAL
 )
 
+REM Initialise image list
+CD "%PARENT%temp\special"
+FOR /f "delims=" %%g IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
+	ECHO Generating image list for %%g
+	DIR /b "%PARENT%temp\%%g_images\*.png" >"%%g_images\%%g_images.txt"
+)
+
+REM Merged scale routines for KANMUSU
+FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
+	SET "FILENAME=%%f"
+	CD "%PARENT%temp\special\%%f_images"
+	For /f "delims=." %%g IN ('TYPE !Filename!_images.txt') DO (
+		SET TARGET=%%g
+		CALL :SCALE_ALPHA
+	)
+)
+
 ENDLOCAL
 ECHO ------------>CON
 ECHO Scaling Done>CON
