@@ -5,10 +5,10 @@ SET PARENT=%~dp0
 
 ECHO Preparing folders...
 CALL CLEANUP > nul 2>&1
-MKDIR temp
-MKDIR output
-MKDIR badfiles
-MKDIR error
+IF NOT EXIST temp MKDIR temp
+IF NOT EXIST output MKDIR output
+IF NOT EXIST badfiles MKDIR badfiles
+IF NOT EXIST error MKDIR error
 
 REM Detect whether the program runs on 64-bit OS by the existence of SysWOW64 folder.
 ECHO Detecting system architecture...
