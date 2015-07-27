@@ -41,6 +41,14 @@ FOR %%f IN (*.swf) DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%%f_images" "%%f"
 )
 
+REM Export SPECIAL files
+CD "%PARENT%temp\special"
+FOR %%f IN (*.swf) DO (
+	ECHO Extracting images in %%f>CON
+	ECHO Extracting images in %%f
+	java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%%f_images" "%%f"
+)
+
 ENDLOCAL
 :EXTRACT_SUCCESS
 ENDLOCAL

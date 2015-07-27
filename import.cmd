@@ -10,11 +10,13 @@ SET PARENT=%~dp0
 ECHO Running %ME%>CON
 ECHO Running %ME%
 
-MKDIR "%PARENT%temp\abyssal"
-MKDIR "%PARENT%temp\kanmusu"
-MKDIR "%PARENT%temp\abyssal_mod"
-MKDIR "%PARENT%temp\kanmusu_mod"
+IF NOT EXIST "%PARENT%temp\abyssal" MKDIR "%PARENT%temp\abyssal"
+IF NOT EXIST "%PARENT%temp\kanmusu" MKDIR "%PARENT%temp\kanmusu"
+IF NOT EXIST "%PARENT%temp\abyssal_mod" MKDIR "%PARENT%temp\abyssal_mod"
+IF NOT EXIST "%PARENT%temp\kanmusu_mod" MKDIR "%PARENT%temp\kanmusu_mod"
+IF NOT EXIST "%PARENT%temp\special" MKDIR "%PARENT%temp\special"
 
+SET _SPECIAL="%PARENT%data\special"
 SET BLOCKSIZE=5
 FOR /F "tokens=1* delims=[]" %%g in ('DIR /A-D /B *.swf ^|find /v /n ""') DO (
 	COPY /y "%%~nxh" "%PARENT%temp"
@@ -31,6 +33,11 @@ CD temp
 REM Rename *.hack.swf to *.hack to isolate two streams
 REN *hack.swf *hack
 
+FOR /f %%f in ('TYPE "%PARENT%data\%_SPECIAL%"') DO
+	ECHO Special file %%f found, redirecting...
+	MOVE /y "%%f" "%PARENT%temp\special\"
+)
+
 For %%f in (*.swf) DO (
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 1 -export image "%PARENT%temp" "%%f"
 	java -jar "%PARENT%bin\ffdec\ffdec.jar" -onerror ignore -format image:png -selectid 11 -export image "%PARENT%temp" "%%f"
@@ -43,10 +50,6 @@ For %%f in (*.swf) DO (
 		ECHO %%f is an ABYSSAL STOCK sprite pack>con
 		ECHO %%f is an ABYSSAL STOCK sprite pack
 		COPY "%%f" "%PARENT%temp\abyssal\"
-	) ELSE IF NOT EXIST "%PARENT%temp\17.png" (
-		ECHO %%f is a KANMUSU SPECIAL sprite pack and not supported at the time>con
-		ECHO %%f is a KANMUSU SPECIAL sprite pack and not supported at the time
-		MOVE /y "%%f" "%PARENT%error\"
 	) ELSE (
 		ECHO %%f is a KANMUSU STOCK sprite pack>con
 		ECHO %%f is a KANMUSU STOCK sprite pack
