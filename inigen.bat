@@ -6,9 +6,10 @@ SET PARENT=%~dp0
 
 REM Progress:
 REM Single file loader: Working
-REM Multi file loader: Not started
+REM Ini config loader: Working
+REM Multi file loader: Will load and expand values, but will not handle multiple values correctly. 
 REM Interactive Menu: Working
-REM Preview: Working
+REM Preview: Working (check on other OS)
 REM redefine offset: WORKING
 REM Write config to file: NOT WORKING
 REM Logging: NOT Working
@@ -16,96 +17,103 @@ REM Logging: NOT Working
 REM Set up the environment
 SET IM="%PARENT%bin\convert.exe"
 SET STREAM="%PARENT%bin\stream.exe"
-IF NOT DEFINED JPEG_QUALITY SET /a JPEG_QUALITY=92
+SET VIEWER="%PARENT%bin\JPEGView\JPEGview.exe"
 
-REM Prepare folders if not already presen
+REM Prepare folders if not already present
 CALL CLEANUP.cmd
-MKDIR temp 2>nul
-MKDIR input 2>nul
-MKDIR output 2>nul
+IF NOT EXIST temp MKDIR temp
+IF NOT EXIST input MKDIR input
+IF NOT EXIST output MKDIR output
 
 REM Load sprite and extract image to generate preview
 REM COPY operation somehow not working
 CD input
-FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
-	ECHO Found mod file %%g, analysing file....
-	COPY "%%g.hack.swf" "%%PARENT%%temp"
-	java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
-	SET FILENAME=%%g
-	ECHO Filename is !FILENAME!
-)
-
 IF NOT EXIST *.hack.swf (
 	ECHO No mod packs found, generator will now quit
 	PAUSE
 	GOTO EXIT
 ) ELSE ( 
-	ECHO Finished reading list of files, initialising generator...
+	FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
+		ECHO Found mod file %%g, analysing file....
+		COPY "%%g.hack.swf" "%%PARENT%%temp"
+		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
+		SET FILENAME=%%g
+		ECHO Finished analysing !FILENAME!.hack.swf
+	)
 	CD %PARENT%temp
 )
 
 REM Add the ability to parse api_start and existing file later, for now use an approximate starting value
 :INIT
-IF EXIST GraphList.txt (
-	ECHO Parsing api_start2...
-) ELSE IF EXIST config.ini (
+IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 	ECHO Loading current config file...
+	FOR /f "tokens=1* delims=^=" %%f IN ('FIND "=" "%PARENT%input\%FILENAME%.config.ini"') DO (
+		SET %%f=%%g
+	)
+) ELSE IF EXIST "%PARENT%data\api_start2.json" (
+	ECHO Parse api_start2...
 ) ELSE (
-	ECHO No information found, generator will proceed using default values
-	SET ship_name=
-	SET /a boko_d_left=128
-	SET /a boko_d_top=128
-	SET /a boko_n_left=128
-	SET /a boko_n_top=128
+	ECHO No other information found, loading default values
+	FOR /f "tokens=1* delims=^=" %%f IN ('FIND "=" "%PARENT%data\default.config.ini"') DO (
+		SET %%f=%%g
+	)
 )
+PAUSE
 
 :MENU
 @ECHO OFF
 CLS
 ECHO.
-ECHO 			############################
-ECHO 			PEROist config.ini Generator
-ECHO 			############################
+ECHO 		############################
+ECHO 		PEROist config.ini Generator
+ECHO 		############################
 ECHO.
-ECHO 1 - Display current offsets         6 - X
-ECHO 2 - Adjust offsets boko_d           7 - X
-ECHO 3 - Adjust offsets boko_n           8 - Write %FILENAME%.config.ini
-ECHO 4 - Adjust offsets battle_d         9 - Reset all input
-ECHO 5 - Adjust offsets battle_n         0 - Quit generator
+ECHO 1 - Display current offsets
+ECHO 2 - Preview and change offsets for normal sprite
+ECHO 3 - Preview and change offsets for "damaged" sprite
+ECHO 4 - Write offset data as APImodifier.json (NOT WORKING)
+ECHO 5 - Write offset data to %FILENAME%.config.ini
+ECHO 8 - Manually enter known offset values (NOT WORKING)
+ECHO 9 - Reset all input
+ECHO 0 - Quit generator
 ECHO.
 ECHO Choose from one of the options above and press enter:
 SET "OPTION="
-SET /p OPTION=[1,2,3,4,5,6,7,8,9,0]
+SET /p OPTION=[1,2,3,4,5,9,0]
 IF /i '%OPTION%'=='1' (
 	GOTO DISPLAY
 ) ELSE IF /i '%OPTION%'=='2' (
-	SET BACKGROUND="%PARENT%data\room.gif"
-	SET SPRITE="%PARENT%data\arrow.gif"
+	SET BACKGROUND="%PARENT%data\room.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17.png"
+	SET ALIAS="Normal"
 	SET /a ORIGIN_X=326
 	SET /a ORIGIN_Y=-19
+	SET /a CURRENT_X=%boko_n_left%
+	SET /a CURRENT_Y=%boko_n_top%
+	SET NEW_X=boko_n_left
+	SET NEW_Y=boko_n_top
+	GOTO PROCESS
+) ELSE IF /i '%OPTION%'=='3' (
+	ECHO OPTION %OPTION% selected.
+	SET BACKGROUND="%PARENT%data\room.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\19.png"
+	SET ALIAS="Damaged"
+	SET /a ORIGIN_X=326
+	SET /a ORIGIN_Y=-45
 	SET /a CURRENT_X=%boko_d_left%
 	SET /a CURRENT_Y=%boko_d_top%
 	SET NEW_X=boko_d_left
 	SET NEW_Y=boko_d_top
 	GOTO PROCESS
-) ELSE IF /i '%OPTION%'=='3' (
-	ECHO OPTION %OPTION% selected.
 ) ELSE IF /i '%OPTION%'=='4' (
-	ECHO OPTION %OPTION% selected.
-	SET BACKGROUND="%PARENT%data\room.gif"
-	SET SPRITE="%PARENT%data\arrow.gif"
-	SET /a ORIGIN_X=326
-	SET /a ORIGIN_Y=-45
-	SET /a CURRENT_X=%boko_n_left%
-	SET /a CURRENT_Y=%boko_n_top%
-	GOTO PROCESS
-) ELSE IF /i '%OPTION%'=='7' (
-	ECHO OPTION %OPTION% selected.
-) ELSE IF /i '%OPTION%'=='8' (
+	GOTO WRITE_JSON
+) ELSE IF /i '%OPTION%'=='5' (
 	GOTO WRITE_INI
+) ELSE IF /i '%OPTION%'=='8' (
+	GOTO MANUAL_ENTRY
 ) ELSE IF /i '%OPTION%'=='9' (
-	ECHO OPTION %OPTION% selected.
 	ECHO Reinitialising offset values...
+	PAUSE
 	GOTO INIT
 ) ELSE IF /i '%OPTION%'=='0 '(
 	GOTO EXIT
@@ -115,28 +123,6 @@ IF /i '%OPTION%'=='1' (
 	GOTO MENU
 )
 GOTO MENU
-
-:PROCESS
-SET /a ANCHOR_X=%ORIGIN_X%+%CURRENT_X%
-SET /a ANCHOR_Y=%ORIGIN_Y%+%CURRENT_Y%
-ECHO Generating preview based on current values (%CURRENT_X%,%CURRENT_Y%)
-%IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite port_preview.jpg
-START rundll32 "%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll", ImageView_Fullscreen %PARENT%temp\port_preview.jpg
-ECHO Are you happy with the results? 
-SET /p ACCEPT=[y/n]
-IF /i %ACCEPT%==y GOTO MENU
-CLS
-ECHO Current %NEW_X% is %CURRENT_X%
-ECHO Please enter a new value for %NEW_X%:
-SET /p !NEW_X!=
-ECHO Current %NEW_Y% is %CURRENT_Y%
-ECHO Please enter a new value for %NEW_Y%:
-SET /p !NEW_Y!=
-ECHO Offset values successfully updated. Press any key to generate a new review.
-SET /a CURRENT_X=%NEW_X%
-SET /a CURRENT_Y=%NEW_Y%
-PAUSE
-GOTO PROCESS
 
 :DISPLAY
 ECHO Displaying current values
@@ -148,13 +134,53 @@ ECHO boko_n_top=%boko_n_top%
 PAUSE
 GOTO MENU
 
+:PROCESS
+SET /a ANCHOR_X=%ORIGIN_X%+%CURRENT_X%
+SET /a ANCHOR_Y=%ORIGIN_Y%+%CURRENT_Y%
+ECHO Generating preview based on current values (%CURRENT_X%,%CURRENT_Y%)
+%IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+START %VIEWER% %PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+ECHO Are you happy with the results? 
+SET /p ACCEPT=[y/n]
+IF /i %ACCEPT%==y GOTO MENU
+CLS
+ECHO Current %NEW_X% is %CURRENT_X%
+ECHO Please enter a new value for %NEW_X%:
+SET /p !NEW_X!=
+ECHO Current %NEW_Y% is %CURRENT_Y%
+ECHO Please enter a new value for %NEW_Y%:
+SET /p !NEW_Y!=
+REM Pipe stored offset values to preview generation
+ECHO Offset values successfully updated. Press any key to generate a new review.
+SET /a CURRENT_X=%NEW_X%
+SET /a CURRENT_Y=%NEW_Y%
+PAUSE
+GOTO PROCESS
+
+REM Manually enter values for each variable
+:MANUAL_ENTRY
+ECHO Choose the value you wish to edit
+PAUSE
+GOTO MENU
+
+REM Write offset data for 74EO.
+:WRITE_JSON
+ECHO Write offset data for 74EO
+PAUSE
+GOTO MENU
+
 REM Writing finalised coordinates to %FILENAME%.config.ini
 :WRITE_INI
-@echo [Info]> %FILENAME%.config.ini
+CD "%PARENT%output"
+DEL /q %FILENAME%.config.ini
+ECHO Writing new coordinates to %FILENAME%.config.ini
+@echo [Info]>%FILENAME%.config.ini
+@echo [Info]>>%FILENAME%.config.ini
 @echo ship_name=%ship_name%>%FILENAME%.config.ini
+@echo [Data]>>%FILENAME%.config.ini
 @echo boko_d_left=%boko_d_left%>>%FILENAME%.config.ini
 @echo boko_d_top=%boko_d_top%>>%FILENAME%.config.ini
-@echo boko_n_left=%boko_n_lef%>>%FILENAME%.config.ini
+@echo boko_n_left=%boko_n_left%>>%FILENAME%.config.ini
 @echo boko_n_top=%boko_n_top%>>%FILENAME%.config.ini
 
 REM skip the remaining for now
