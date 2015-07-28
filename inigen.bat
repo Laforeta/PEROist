@@ -174,10 +174,9 @@ REM Writing finalised coordinates to %FILENAME%.config.ini
 CD "%PARENT%output"
 DEL /q %FILENAME%.config.ini
 ECHO Writing new coordinates to %FILENAME%.config.ini
-@echo [Info]>%FILENAME%.config.ini
-@echo [Info]>>%FILENAME%.config.ini
+@echo [info] >%FILENAME%.config.ini
 @echo ship_name=%ship_name%>%FILENAME%.config.ini
-@echo [Data]>>%FILENAME%.config.ini
+@echo [graph]>>%FILENAME%.config.ini
 @echo boko_d_left=%boko_d_left%>>%FILENAME%.config.ini
 @echo boko_d_top=%boko_d_top%>>%FILENAME%.config.ini
 @echo boko_n_left=%boko_n_left%>>%FILENAME%.config.ini
