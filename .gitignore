@@ -3,7 +3,6 @@ _*.bat
 *.log
 log*.txt
 Thumbs.db
-*.png
 *.jpg
 *.swf
 *.out
