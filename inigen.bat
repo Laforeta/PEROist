@@ -59,15 +59,15 @@ ECHO 		############################
 ECHO 		PEROist config.ini Generator
 ECHO 		############################
 ECHO.
-ECHO 1 - Preview and change main offsets (standard)
-ECHO 2 - Preview and change main offsets (battle-damage)
-ECHO 3 - Preview and change sub offsets (standard)
-ECHO 4 - Preview and change sub offsets (battle-damage)
-ECHO 5 - Preview and change wedding offsets
-ECHO 6 - Display current offsets [and manually enter offset values]
+ECHO 1 - Preview and change primary offsets (standard)
+ECHO 2 - Preview and change primary offsets (battle-damage)
+ECHO 3 - Preview and change secondary offsets (standard)
+ECHO 4 - Preview and change secondary offsets (battle-damage)
+ECHO 5 - Preview and change wedding offsets [NOT WORKING]
+ECHO 6 - Display current values [and manually enter offset values]
 ECHO 7 - Write offset data to APImodifier.json [NOT WORKING]
 ECHO 8 - Write offset data to %FILENAME%.config.ini
-ECHO 9 - Reset all input and reload initial values
+ECHO 9 - Reset all parameters and reload initial values
 ECHO 0 - Quit
 ECHO.
 ECHO Choose from one of the options above and press enter:
@@ -103,8 +103,8 @@ IF /i '%OPTION%'=='0' (
 	SET BACKGROUND="%PARENT%data\panel.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\13.png"
 	SET ALIAS="standard"
-	SET /a ORIGIN_X=
-	SET /a ORIGIN_Y=
+	SET /a ORIGIN_X=50
+	SET /a ORIGIN_Y=73
 	SET /a CURRENT_X=%kaisyu_n_left%
 	SET /a CURRENT_Y=%kaisyu_n_top%
 	SET NEW_X=kaisyu_n_left
@@ -115,8 +115,8 @@ IF /i '%OPTION%'=='0' (
 	SET BACKGROUND="%PARENT%data\panel.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\15.png"
 	SET ALIAS="battledamage"
-	SET /a ORIGIN_X=
-	SET /a ORIGIN_Y=
+	SET /a ORIGIN_X=34
+	SET /a ORIGIN_Y=63
 	SET /a CURRENT_X=%kaisyu_d_left%
 	SET /a CURRENT_Y=%kaisyu_d_top%
 	SET NEW_X=kaisyu_d_left
@@ -201,7 +201,8 @@ GOTO DISPLAY
 SET /a ANCHOR_X=%ORIGIN_X%+%CURRENT_X%
 SET /a ANCHOR_Y=%ORIGIN_Y%+%CURRENT_Y%
 ECHO Generating preview based on current values (%CURRENT_X%,%CURRENT_Y%)
-%IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+%IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoMask.jpg
+%IM% Preview_NoMask.jpg "%PARENT%data\room_mask.png" -geometry +0+0 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
 START %VIEWER% %PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
 ECHO Are you happy with the results? 
 SET /p ACCEPT=[y/n]
