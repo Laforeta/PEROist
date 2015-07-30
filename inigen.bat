@@ -36,12 +36,65 @@ IF NOT EXIST *.hack.swf (
 REM Add the ability to parse api_start and existing file later, for now use an approximate starting value
 :INIT
 IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
-	ECHO Loading current config file...
+	ECHO Loading user-supplied config file...
 	FOR /f "tokens=1* delims=^=" %%f IN ('FIND "=" "%PARENT%input\%FILENAME%.config.ini"') DO (
 		SET %%f=%%g
 	)
-) ELSE IF EXIST "%PARENT%data\api_start2.json" (
-	ECHO Parse api_start2...
+) ELSE IF EXIST "%PARENT%data\GraphList.txt" (
+	ECHO Finding offsets in GraphList.txt
+	FOR /f "tokens=8-11 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		SET boko_n_left=%%g
+		SET boko_n_top=%%h
+		SET boko_d_left=%%i
+		SET boko_d_top=%%j
+	)
+	FOR /f "tokens=12-15 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		SET map_n_left=%%g
+		SET map_n_top=%%h
+		SET map_d_left=%%i
+		SET map_d_top=%%j
+	)
+	FOR /f "tokens=16-19 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		SET battle_n_left=%%g
+		SET battle_n_top=%%h
+		SET battle_d_left=%%i
+		SET battle_d_top=%%j
+	)
+	FOR /f "tokens=20-25 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		SET ensyuf_n_left=%%g
+		SET ensyuf_n_top=%%h
+		SET ensyuf_d_left=%%i
+		SET ensyuf_d_top=%%j
+		SET ensyue_n_left=%%k
+		SET ensyue_n_top=%%l
+	)
+	FOR /f "tokens=26-29 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		SET kaizo_n_left=%%g
+		SET kaizo_n_top=%%h
+		SET kaizo_d_left=%%i
+		SET kaizo_d_top=%%j
+	)
+	FOR /f "usebackq tokens=1-29* delims=," %%A in ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		FOR /f "tokens=1-26* delims=," %%a in ("%%^") DO (
+			FOR /f "tokens=1-9 delims=," %%1 in ("%%{") DO (
+				REM Wayabout method to make cmd parse tokens beyond the 31st. Consider merging in other blocks for readability
+				REM Tokens 1-26 are in variables %%A - %%Z
+				REM Token  27 is in %%[
+				REM Token  28 is in %%\
+				REM Token  29 is in %%]
+				REM Tokens 30-55 are in %%a - %%z
+				REM Tokens 56-64 are in %%1 - %%9
+				SET kaisyu_n_left=%%a
+				SET kaisyu_n_top=%%b
+				SET kaisyu_d_left=%%c
+				SET kaisyu_d_top=%%d
+				SET weda_left=%%e
+				SET weda_top=%%f
+				SET wedb_left=%%g
+				SET wedb_top=%%h
+			)
+		)
+	)
 ) ELSE (
 	ECHO No existing data found, loading default failsafe values.
 	PAUSE
