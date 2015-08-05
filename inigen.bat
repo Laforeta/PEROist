@@ -17,16 +17,18 @@ IF NOT EXIST output MKDIR output
 
 REM Load sprite and extract image to generate preview
 REM COPY operation somehow not working
-CD input
+CD output
 IF NOT EXIST *.hack.swf (
 	ECHO No mod packs found, generator will now quit
 	PAUSE
 	GOTO EXIT
 ) ELSE ( 
 	FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
-		ECHO Found file %%g.hack.swf found, analysing...
+		ECHO Found file %%g.hack.swf, analysing...
 		COPY "%%g.hack.swf" "%%PARENT%%temp"
 		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\17.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\19.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\19.png"
 		SET FILENAME=%%g
 		ECHO Finished analysing !FILENAME!.hack.swf
 	)
@@ -74,25 +76,18 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 		SET kaizo_d_left=%%i
 		SET kaizo_d_top=%%j
 	)
-	FOR /f "usebackq tokens=1-29* delims=," %%A in ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
-		FOR /f "tokens=1-26* delims=," %%a in ("%%^") DO (
-			FOR /f "tokens=1-9 delims=," %%1 in ("%%{") DO (
-				REM Wayabout method to make cmd parse tokens beyond the 31st. Consider merging in other blocks for readability
-				REM Tokens 1-26 are in variables %%A - %%Z
-				REM Token  27 is in %%[
-				REM Token  28 is in %%\
-				REM Token  29 is in %%]
-				REM Tokens 30-55 are in %%a - %%z
-				REM Tokens 56-64 are in %%1 - %%9
-				SET kaisyu_n_left=%%a
-				SET kaisyu_n_top=%%b
-				SET kaisyu_d_left=%%c
-				SET kaisyu_d_top=%%d
-				SET weda_left=%%e
-				SET weda_top=%%f
-				SET wedb_left=%%g
-				SET wedb_top=%%h
-			)
+	FOR /f "tokens=30-31 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		SET kaisyu_n_left=%%g
+		SET kaisyu_n_top=%%h
+	)
+	FOR /f "tokens=30* delims=," %%A IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+		FOR /f "tokens=1-7* delims=," %%a IN ("%%B") DO (
+			SET kaisyu_d_left=%%b
+			SET kaisyu_d_top=%%c
+			SET weda_left=%%d
+			SET weda_top=%%e
+			SET wedb_left=%%f
+			SET wedb_top=%%g
 		)
 	)
 ) ELSE (
@@ -132,8 +127,8 @@ IF /i '%OPTION%'=='0' (
 	SET BACKGROUND="%PARENT%data\room.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17.png"
 	SET ALIAS="standard"
-	SET /a ORIGIN_X=326
-	SET /a ORIGIN_Y=-19
+	SET /a ORIGIN_X=327
+	SET /a ORIGIN_Y=-65
 	SET /a CURRENT_X=%boko_n_left%
 	SET /a CURRENT_Y=%boko_n_top%
 	SET NEW_X=boko_n_left
@@ -144,8 +139,8 @@ IF /i '%OPTION%'=='0' (
 	SET BACKGROUND="%PARENT%data\room.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\19.png"
 	SET ALIAS="battledamage"
-	SET /a ORIGIN_X=326
-	SET /a ORIGIN_Y=-45
+	SET /a ORIGIN_X=327
+	SET /a ORIGIN_Y=-65
 	SET /a CURRENT_X=%boko_d_left%
 	SET /a CURRENT_Y=%boko_d_top%
 	SET NEW_X=boko_d_left
@@ -153,11 +148,11 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=2
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='3' (
-	SET BACKGROUND="%PARENT%data\panel.png"
+	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\13.png"
 	SET ALIAS="standard"
-	SET /a ORIGIN_X=50
-	SET /a ORIGIN_Y=73
+	SET /a ORIGIN_X=65
+	SET /a ORIGIN_Y=53
 	SET /a CURRENT_X=%kaisyu_n_left%
 	SET /a CURRENT_Y=%kaisyu_n_top%
 	SET NEW_X=kaisyu_n_left
@@ -165,11 +160,11 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=0
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='4' (
-	SET BACKGROUND="%PARENT%data\panel.png"
+	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\15.png"
 	SET ALIAS="battledamage"
-	SET /a ORIGIN_X=34
-	SET /a ORIGIN_Y=63
+	SET /a ORIGIN_X=65
+	SET /a ORIGIN_Y=53
 	SET /a CURRENT_X=%kaisyu_d_left%
 	SET /a CURRENT_Y=%kaisyu_d_top%
 	SET NEW_X=kaisyu_d_left
@@ -177,11 +172,12 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=0
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='5' (
+	GOTO MENU
 	SET BACKGROUND="%PARENT%data\chapel.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17.png"
 	SET ALIAS="wedding"
-	SET /a ORIGIN_X=
-	SET /a ORIGIN_Y=
+	SET /a ORIGIN_X=0
+	SET /a ORIGIN_Y=0
 	SET /a CURRENT_X=%weda_left%
 	SET /a CURRENT_Y=%weda_top%
 	SET NEW_X=weda_left
@@ -231,10 +227,10 @@ ECHO kaizo_n_left=%kaizo_n_left%
 ECHO kaizo_n_top=%kaizo_n_top%
 ECHO kaizo_d_left=%kaizo_d_left%
 ECHO kaizo_d_top=%kaizo_d_top%
-ECHO kaisyu_d_left=%kaisyu_d_left%
-ECHO kaisyu_d_top=%kaisyu_d_top%
 ECHO kaisyu_n_left=%kaisyu_n_left%
 ECHO kaisyu_n_top=%kaisyu_n_top%
+ECHO kaisyu_d_left=%kaisyu_d_left%
+ECHO kaisyu_d_top=%kaisyu_d_top%
 ECHO weda_left=%weda_left%
 ECHO weda_top=%weda_top%
 ECHO wedb_left=%wedb_left%
@@ -273,8 +269,8 @@ IF '%DELTA%'=='0' (
 	ECHO Nothing more to be done, proceed with the loop...
 	) ELSE IF '%DELTA%'=='1' (
 	ECHO Setting derivative offsets for the standard set based on current delta
-	SET /a DELTA_X=!CURRENT_X!-!NEW_X!
-	SET /a DELTA_Y=!CURRENT_T!-!NEW_Y!
+	SET /a DELTA_X=!NEW_X!-!CURRENT_X!
+	SET /a DELTA_Y=!NEW_Y!-!CURRENT_Y!
 	SET /a map_n_left=!map_n_left!+!DELTA_X!
 	SET /a map_n_top=!map_n_top!+!DELTA_Y!
 	SET /a battle_n_left=!battle_n_left!+!DELTA_X!
@@ -287,8 +283,8 @@ IF '%DELTA%'=='0' (
 	SET /a kaizo_n_top=!kaizo_n_top!+!DELTA_Y!
 	) ELSE IF '%DELTA%'=='2' (
 	ECHO Setting derivative offsets for the battledamaged set based on current delta
-	SET /a DELTA_X=!CURRENT_X!-!NEW_X!
-	SET /a DELTA_Y=!CURRENT_T!-!NEW_Y!
+	SET /a DELTA_X=!NEW_X!-!CURRENT_X!
+	SET /a DELTA_Y=!NEW_Y!-!CURRENT_Y!
 	SET /a map_d_left=!map_d_left!+!DELTA_X!
 	SET /a map_d_top=!map_d_top!+!DELTA_Y!
 	SET /a battle_d_left=!battle_d_left!+!DELTA_X!
@@ -298,9 +294,9 @@ IF '%DELTA%'=='0' (
 	SET /a kaizo_d_left=!kaizo_d_left!+!DELTA_X!
 	SET /a kaizo_d_top=!kaizo_d_top!+!DELTA_Y!
 	) ELSE IF '%DELTA%'=='3' (
-	ECHO Applying derivative offsets to wedding cut-scene
-	SET /a DELTA_X=!CURRENT_X!-!NEW_X!
-	SET /a DELTA_Y=!CURRENT_T!-!NEW_Y!
+	ECHO Applying derived values for wedb
+	SET /a DELTA_X=!NEW_X!-!CURRENT_X!
+	SET /a DELTA_Y=!NEW_Y!-!CURRENT_Y!
 	SET /a wedb_left=!weda_left!+!delta_X!
 	SET /a wedb_top=!weda_top!+!delta_Y!	
 	) ELSE (
@@ -317,7 +313,7 @@ GOTO PROCESS
 
 REM Write offset data for 74EO.
 :WRITE_JSON
-ECHO Write offset data for 74EO
+ECHO Write offset data for 74EO [NOT WORKING]
 PAUSE
 GOTO MENU
 
@@ -330,38 +326,36 @@ DEL /q %FILENAME%.config.ini
 @echo [info]>%FILENAME%.config.ini
 @echo ship_name=%ship_name%>>%FILENAME%.config.ini
 @echo [graph]>>%FILENAME%.config.ini
-@echo boko_d_left=%boko_d_left%>>%FILENAME%.config.ini
-@echo boko_d_top=%boko_d_top%>>%FILENAME%.config.ini
 @echo boko_n_left=%boko_n_left%>>%FILENAME%.config.ini
 @echo boko_n_top=%boko_n_top%>>%FILENAME%.config.ini
-@echo ensyue_d_left=%ensyue_d_left%>>%FILENAME%.config.ini
-@echo ensyue_d_top=%ensyue_d_top%>>%FILENAME%.config.ini
-@echo ensyue_n_left=%ensyue_n_left%>>%FILENAME%.config.ini
-@echo ensyue_n_top=%ensyue_n_top%>>%FILENAME%.config.ini
-@echo ensyuf_d_left=%ensyuf_d_left%>>%FILENAME%.config.ini
-@echo ensyuf_d_top=%ensyuf_d_top%>>%FILENAME%.config.ini
-@echo ensyuf_n_left=%ensyuf_n_left%>>%FILENAME%.config.ini
-@echo ensyuf_n_top=%ensyuf_n_top%>>%FILENAME%.config.ini
-@echo kaisyu_d_left=%kaisyu_d_left%>>%FILENAME%.config.ini
-@echo kaisyu_d_top=%kaisyu_d_top%>>%FILENAME%.config.ini
-@echo kaisyu_n_left=%kaisyu_n_left%>>%FILENAME%.config.ini
-@echo kaisyu_n_top=%kaisyu_n_top%>>%FILENAME%.config.ini
-@echo kaizo_d_left=%kaizo_d_left%>>%FILENAME%.config.ini
-@echo kaizo_d_top=%kaizo_d_top%>>%FILENAME%.config.ini
-@echo kaizo_n_left=%kaizo_n_left%>>%FILENAME%.config.ini
-@echo kaizo_n_top=%kaizo_n_top%>>%FILENAME%.config.ini
-@echo map_d_top=%map_d_top%>>%FILENAME%.config.ini
-@echo map_d_left=%map_d_left%>>%FILENAME%.config.ini
-@echo map_n_top=%map_n_top%>>%FILENAME%.config.ini
+@echo boko_d_left=%boko_d_left%>>%FILENAME%.config.ini
+@echo boko_d_top=%boko_d_top%>>%FILENAME%.config.ini
 @echo map_n_left=%map_n_left%>>%FILENAME%.config.ini
-@echo battle_d_top=%battle_d_top%>>%FILENAME%.config.ini
-@echo battle_d_left=%battle_d_left%>>%FILENAME%.config.ini
+@echo map_n_top=%map_n_top%>>%FILENAME%.config.ini
+@echo map_d_left=%map_d_left%>>%FILENAME%.config.ini
+@echo map_d_top=%map_d_top%>>%FILENAME%.config.ini
 @echo battle_n_top=%battle_n_top%>>%FILENAME%.config.ini
 @echo battle_n_left=%battle_n_left%>>%FILENAME%.config.ini
-@echo weda_left=%weda_left%>>%FILENAME%.config.ini
-@echo weda_top=%weda_top%>>%FILENAME%.config.ini
-@echo wedb_left=%wedb_left%>>%FILENAME%.config.ini
-@echo wedb_top=%wedb_top%>>%FILENAME%.config.ini
+@echo battle_d_top=%battle_d_top%>>%FILENAME%.config.ini
+@echo battle_d_left=%battle_d_left%>>%FILENAME%.config.ini
+@echo ensyuf_n_left=%ensyuf_n_left%>>%FILENAME%.config.ini
+@echo ensyuf_n_top=%ensyuf_n_top%>>%FILENAME%.config.ini
+@echo ensyuf_d_left=%ensyuf_d_left%>>%FILENAME%.config.ini
+@echo ensyuf_d_top=%ensyuf_d_top%>>%FILENAME%.config.ini
+@echo ensyue_n_left=%ensyue_n_left%>>%FILENAME%.config.ini
+@echo ensyue_n_top=%ensyue_n_top%>>%FILENAME%.config.ini
+@echo kaizo_n_left=%kaizo_n_left%>>%FILENAME%.config.ini
+@echo kaizo_n_top=%kaizo_n_top%>>%FILENAME%.config.ini
+@echo kaizo_d_left=%kaizo_d_left%>>%FILENAME%.config.ini
+@echo kaizo_d_top=%kaizo_d_top%>>%FILENAME%.config.ini
+@echo kaisyu_n_left=%kaisyu_n_left%>>%FILENAME%.config.ini
+@echo kaisyu_n_top=%kaisyu_n_top%>>%FILENAME%.config.ini
+@echo kaisyu_d_left=%kaisyu_d_left%>>%FILENAME%.config.ini
+@echo kaisyu_d_top=%kaisyu_d_top%>>%FILENAME%.config.ini
+REM @echo weda_left=%weda_left%>>%FILENAME%.config.ini
+REM @echo weda_top=%weda_top%>>%FILENAME%.config.ini
+REM @echo wedb_left=%wedb_left%>>%FILENAME%.config.ini
+REM @echo wedb_top=%wedb_top%>>%FILENAME%.config.ini
 ECHO Saving new coordinates to %PARENT%output\%FILENAME%.config.ini
 PAUSE
 GOTO MENU
