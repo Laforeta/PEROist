@@ -27,8 +27,9 @@ IF NOT EXIST *.hack.swf (
 		ECHO Found file %%g.hack.swf, analysing...
 		COPY "%%g.hack.swf" "%%PARENT%%temp"
 		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
-		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\17.png"
-		%IM% "%PARENT%temp\%%g.hack.swf_images\19.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\19.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\17_102.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 174.75%% "%PARENT%temp\%%g.hack.swf_images\17_175.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\19.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\19_102.png"
 		SET FILENAME=%%g
 		ECHO Finished analysing !FILENAME!.hack.swf
 	)
@@ -125,7 +126,7 @@ IF /i '%OPTION%'=='0' (
 	GOTO EXIT
 ) ELSE IF /i '%OPTION%'=='1' (
 	SET BACKGROUND="%PARENT%data\room.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17_102.png"
 	SET ALIAS="standard"
 	SET /a ORIGIN_X=327
 	SET /a ORIGIN_Y=-65
@@ -137,7 +138,7 @@ IF /i '%OPTION%'=='0' (
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='2' (
 	SET BACKGROUND="%PARENT%data\room.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\19.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\19_102.png"
 	SET ALIAS="battledamage"
 	SET /a ORIGIN_X=327
 	SET /a ORIGIN_Y=-65
@@ -172,18 +173,20 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=0
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='5' (
-	GOTO MENU
 	SET BACKGROUND="%PARENT%data\chapel.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17_175.png"
 	SET ALIAS="wedding"
-	SET /a ORIGIN_X=0
-	SET /a ORIGIN_Y=0
-	SET /a CURRENT_X=%weda_left%
-	SET /a CURRENT_Y=%weda_top%
-	SET NEW_X=weda_left
-	SET NEW_Y=weda_top
-	SET DELTA=3
-	GOTO PROCESS
+	SET /a ORIGIN_X=400
+	SET /a ORIGIN_Y=10
+	SET /a CURRENT_WEDA_X=%weda_left%
+	SET /a CURRENT_WEDA_Y=%weda_top%
+	SET /a CURRENT_WEDB_X=%wedb_left%
+	SET /a CURRENT_WEDB_Y=%wedb_top%
+	SET NEW_WEDA_X=weda_left
+	SET NEW_WEDA_Y=weda_top
+	SET NEW_WEDB_X=wedb_left
+	SET NEW_WEDB_Y=wedb_top
+	GOTO WEDDING
 ) ELSE IF /i '%OPTION%'=='6' (
 	GOTO DISPLAY
 ) ELSE IF /i '%OPTION%'=='7' (
@@ -236,7 +239,6 @@ ECHO weda_top=%weda_top%
 ECHO wedb_left=%wedb_left%
 ECHO wedb_top=%wedb_top%
 
-
 :MANUAL_ENTRY
 ECHO Would you like to manually modify any of these values?
 SET /p OPTION2=[y/n]
@@ -246,13 +248,45 @@ SET /p _VALUE=Please enter the new value of offset you wish to modify:
 SET %_NAME%=%_VALUE%
 GOTO DISPLAY
 
+:WEDDING
+REM Batch cannot do floating point calculations, hence 699/400 is used as a scaling factor instead of 1.7475 and errors should be neglegible
+SET /a ANCHOR_X=%ORIGIN_X%-(%CURRENT_WEDA_X%+%CURRENT_WEDB_X%/2)*699/400
+SET /a ANCHOR_Y=%ORIGIN_Y%-%CURRENT_WEDA_Y%*699/400
+ECHO Generating preview based on current values (%ANCHOR_X%,%ANCHOR_Y%)
+ECHO %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoRing.jpg
+ECHO %IM% Preview_NoRing.jpg "%PARENT%data\ring.png" -geometry +400+200 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+ECHO START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_WEDA_X!,!CURRENT_WEDA_Y!_!CURRENT_WEDB_X!,!CURRENT_WEDB_Y!.jpg"
+ECHO weda defines the XY coordinates of face position while wedb defines the size of the face rectangle
+ECHO It is recommended that you get an approximate area of the character's face via another image editing tool before attempting to change this value manually
+ECHO wedb_top or face height have no effect on preview because it is not used to generate this particular scene
+ECHO However it will affect how the other scenes in WeddingMain are displayed
+ECHO Are you happy with the results? 
+SET /p ACCEPT=[y/n]
+IF /i %ACCEPT%==y GOTO MENU
+CLS
+REM First give new values for currently selected variables
+ECHO Current %NEW_WEDA_X% is %CURRENT_WEDA_X%
+ECHO Please enter a new value for %NEW_WEDA_X%:
+SET /p !NEW_WEDA_X!=
+ECHO Current %NEW_WEDA_Y% is %CURRENT_WEDA_Y%
+ECHO Please enter a new value for %NEW_WEDA_Y%:
+SET /p !NEW_WEDA_Y!=
+ECHO Current %NEW_WEDB_X% is %CURRENT_WEDB_X%
+ECHO Please enter a new value for %NEW_WEDB_X%:
+SET /p !NEW_WEDB_X!=
+ECHO Current %NEW_WEDB_Y% is %CURRENT_WEDB_Y%
+ECHO Please enter a new value for %NEW_WEDB_Y%:
+SET /p !NEW_WEDB_Y!=
+GOTO Wedding
+
+
 :PROCESS
 SET /a ANCHOR_X=%ORIGIN_X%+%CURRENT_X%
 SET /a ANCHOR_Y=%ORIGIN_Y%+%CURRENT_Y%
 ECHO Generating preview based on current values (%CURRENT_X%,%CURRENT_Y%)
 %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoMask.jpg
 %IM% Preview_NoMask.jpg "%PARENT%data\room_mask.png" -geometry +0+0 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
-START %VIEWER% %PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg"
 ECHO Are you happy with the results? 
 SET /p ACCEPT=[y/n]
 IF /i %ACCEPT%==y GOTO MENU
@@ -293,12 +327,6 @@ IF '%DELTA%'=='0' (
 	SET /a ensyuf_d_top=!ensyuf_d_top!+!DELTA_Y!
 	SET /a kaizo_d_left=!kaizo_d_left!+!DELTA_X!
 	SET /a kaizo_d_top=!kaizo_d_top!+!DELTA_Y!
-	) ELSE IF '%DELTA%'=='3' (
-	ECHO Applying derived values for wedb
-	SET /a DELTA_X=!NEW_X!-!CURRENT_X!
-	SET /a DELTA_Y=!NEW_Y!-!CURRENT_Y!
-	SET /a wedb_left=!weda_left!+!delta_X!
-	SET /a wedb_top=!weda_top!+!delta_Y!	
 	) ELSE (
 	ECHO Something went wrong. DELTA flag is either not set or had an unexpected value
 	PAUSE
