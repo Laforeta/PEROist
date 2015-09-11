@@ -20,9 +20,7 @@ REM Binaries must be called as variables using their full path
 SET IM="%PARENT%bin\convert.exe"
 SET STREAM="%PARENT%bin\stream.exe"
 IF NOT DEFINED JPEG_QUALITY SET /a JPEG_QUALITY=92
-
 IF NOT DEFINED AMD64 SET /a AMD64=1
-
 IF %AMD64% neq 0 (
 	SET WAIFU2X="%PARENT%bin\x64\waifu2x-converter_x64.exe"
 ) ELSE (
@@ -139,7 +137,7 @@ FOR /f "delims=" %%g IN ('DIR /b /s /a:-d "%PARENT%temp\abyssal_mod\*.swf"') DO 
 	ENDLOCAL
 )
 
-REM Initialise image list
+REM Build image list for SPECIAL
 CD "%PARENT%temp\special"
 FOR /f "delims=" %%g IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
 	ECHO Generating image list for %%g
@@ -184,7 +182,7 @@ ECHO Generating Scaled alpha for Image %TARGET% in %FILENAME%...
 %WAIFU2X% %MODEL% -m scale -i %TARGET%_alpha.png -o 2x%TARGET%_alpha.png
 ECHO Combining RGB with Alpha for Image %TARGET% in %FILENAME%...
 %IM% 2x%TARGET%_rgb.png 2x%TARGET%_alpha.png -alpha off -compose CopyOpacity -composite PNG32:2x%TARGET%.png
-ECHO Generate binary mask...
+ECHO Generating binary mask for Image %TARGET% in %FILENAME%...
 %STREAM% -map a -storage-type char 2x%TARGET%.png 2x%TARGET%.bin
 GOTO:EOF
 
