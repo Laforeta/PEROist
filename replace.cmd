@@ -4,6 +4,8 @@ SET PARENT=%~dp0
 
 ECHO Running %ME%
 
+SET QUANT="%PARENT%bin\pngquant.exe""
+
 ECHO ----------------->CON
 ECHO Replacement Start>CON
 ECHO ----------------->CON
@@ -68,7 +70,9 @@ FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
 	SET FILENAME=%%f
 	FOR /f "delims=." %%g IN ('TYPE "!FILENAME!_images\!Filename!_images.txt"') DO (
 		SET /a TARGET=%%g
-		ECHO Inserting Image #%TARGET%...
+		ECHO Compressing Image #!TARGET!...
+		%QUANT% --speed 1 2x%%g.png
+		ECHO Inserting Image #!TARGET!...
 		java -jar "%PARENT%bin\ffdec\ffdec.jar" -replace !FILENAME! !FILENAME! !TARGET! "!FILENAME!_images\2x!TARGET!.png"
 	)
 )
