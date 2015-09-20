@@ -152,8 +152,8 @@ IF /i '%OPTION%'=='0' (
 	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\13.png"
 	SET ALIAS="standard"
-	SET /a ORIGIN_X=65
-	SET /a ORIGIN_Y=53
+	SET /a ORIGIN_X=50
+	SET /a ORIGIN_Y=70
 	SET /a CURRENT_X=%kaisyu_n_left%
 	SET /a CURRENT_Y=%kaisyu_n_top%
 	SET NEW_X=kaisyu_n_left
@@ -164,8 +164,8 @@ IF /i '%OPTION%'=='0' (
 	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\15.png"
 	SET ALIAS="battledamage"
-	SET /a ORIGIN_X=65
-	SET /a ORIGIN_Y=53
+	SET /a ORIGIN_X=50
+	SET /a ORIGIN_Y=70
 	SET /a CURRENT_X=%kaisyu_d_left%
 	SET /a CURRENT_Y=%kaisyu_d_top%
 	SET NEW_X=kaisyu_d_left
