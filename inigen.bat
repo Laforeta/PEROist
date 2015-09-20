@@ -354,36 +354,36 @@ DEL /q %FILENAME%.config.ini
 @echo [info]>%FILENAME%.config.ini
 @echo ship_name=%ship_name%>>%FILENAME%.config.ini
 @echo [graph]>>%FILENAME%.config.ini
-@echo boko_n_left=%boko_n_left%>>%FILENAME%.config.ini
-@echo boko_n_top=%boko_n_top%>>%FILENAME%.config.ini
-@echo boko_d_left=%boko_d_left%>>%FILENAME%.config.ini
-@echo boko_d_top=%boko_d_top%>>%FILENAME%.config.ini
-@echo map_n_left=%map_n_left%>>%FILENAME%.config.ini
-@echo map_n_top=%map_n_top%>>%FILENAME%.config.ini
-@echo map_d_left=%map_d_left%>>%FILENAME%.config.ini
-@echo map_d_top=%map_d_top%>>%FILENAME%.config.ini
-@echo battle_n_top=%battle_n_top%>>%FILENAME%.config.ini
-@echo battle_n_left=%battle_n_left%>>%FILENAME%.config.ini
-@echo battle_d_top=%battle_d_top%>>%FILENAME%.config.ini
-@echo battle_d_left=%battle_d_left%>>%FILENAME%.config.ini
-@echo ensyuf_n_left=%ensyuf_n_left%>>%FILENAME%.config.ini
-@echo ensyuf_n_top=%ensyuf_n_top%>>%FILENAME%.config.ini
-@echo ensyuf_d_left=%ensyuf_d_left%>>%FILENAME%.config.ini
-@echo ensyuf_d_top=%ensyuf_d_top%>>%FILENAME%.config.ini
-@echo ensyue_n_left=%ensyue_n_left%>>%FILENAME%.config.ini
-@echo ensyue_n_top=%ensyue_n_top%>>%FILENAME%.config.ini
-@echo kaizo_n_left=%kaizo_n_left%>>%FILENAME%.config.ini
-@echo kaizo_n_top=%kaizo_n_top%>>%FILENAME%.config.ini
-@echo kaizo_d_left=%kaizo_d_left%>>%FILENAME%.config.ini
-@echo kaizo_d_top=%kaizo_d_top%>>%FILENAME%.config.ini
-@echo kaisyu_n_left=%kaisyu_n_left%>>%FILENAME%.config.ini
-@echo kaisyu_n_top=%kaisyu_n_top%>>%FILENAME%.config.ini
-@echo kaisyu_d_left=%kaisyu_d_left%>>%FILENAME%.config.ini
-@echo kaisyu_d_top=%kaisyu_d_top%>>%FILENAME%.config.ini
-REM @echo weda_left=%weda_left%>>%FILENAME%.config.ini
-REM @echo weda_top=%weda_top%>>%FILENAME%.config.ini
-REM @echo wedb_left=%wedb_left%>>%FILENAME%.config.ini
-REM @echo wedb_top=%wedb_top%>>%FILENAME%.config.ini
+@echo boko_n_left=!boko_n_left!>>%FILENAME%.config.ini
+@echo boko_n_top=!boko_n_top!>>%FILENAME%.config.ini
+@echo boko_d_left=!boko_d_left!>>%FILENAME%.config.ini
+@echo boko_d_top=!boko_d_top!>>%FILENAME%.config.ini
+@echo map_n_left=!map_n_left!>>%FILENAME%.config.ini
+@echo map_n_top=!map_n_top!>>%FILENAME%.config.ini
+@echo map_d_left=!map_d_left!>>%FILENAME%.config.ini
+@echo map_d_top=!map_d_top!>>%FILENAME%.config.ini
+@echo battle_n_top=!battle_n_top!>>%FILENAME%.config.ini
+@echo battle_n_left=!battle_n_left!>>%FILENAME%.config.ini
+@echo battle_d_top=!battle_d_top!>>%FILENAME%.config.ini
+@echo battle_d_left=!battle_d_left!>>%FILENAME%.config.ini
+@echo ensyuf_n_left=!ensyuf_n_left!>>%FILENAME%.config.ini
+@echo ensyuf_n_top=!ensyuf_n_top!>>%FILENAME%.config.ini
+@echo ensyuf_d_left=!ensyuf_d_left!>>%FILENAME%.config.ini
+@echo ensyuf_d_top=!ensyuf_d_top!>>%FILENAME%.config.ini
+@echo ensyue_n_left=!ensyue_n_left!>>%FILENAME%.config.ini
+@echo ensyue_n_top=!ensyue_n_top!>>%FILENAME%.config.ini
+@echo kaizo_n_left=!kaizo_n_left!>>%FILENAME%.config.ini
+@echo kaizo_n_top=!kaizo_n_top!>>%FILENAME%.config.ini
+@echo kaizo_d_left=!kaizo_d_left!>>%FILENAME%.config.ini
+@echo kaizo_d_top=!kaizo_d_top!>>%FILENAME%.config.ini
+@echo kaisyu_n_left=!kaisyu_n_left!>>%FILENAME%.config.ini
+@echo kaisyu_n_top=!kaisyu_n_top!>>%FILENAME%.config.ini
+@echo kaisyu_d_left=!kaisyu_d_left!>>%FILENAME%.config.ini
+@echo kaisyu_d_top=!kaisyu_d_top!>>%FILENAME%.config.ini
+@echo weda_left=!weda_left!>>%FILENAME%.config.ini
+@echo weda_top=!weda_top!>>%FILENAME%.config.ini
+@echo wedb_left=!wedb_left!>>%FILENAME%.config.ini
+@echo wedb_top=!wedb_top!>>%FILENAME%.config.ini
 ECHO Saving new coordinates to %PARENT%output\%FILENAME%.config.ini
 PAUSE
 GOTO MENU
