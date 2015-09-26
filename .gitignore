@@ -11,6 +11,7 @@ Thumbs.db
 /scrap/
 /temp/
 /src/
+/data/*.png
 /bin_dev/
 /bin_release/
 /input/
