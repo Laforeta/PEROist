@@ -25,7 +25,6 @@ IF NOT EXIST *.hack.swf (
 ) ELSE ( 
 	FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
 		ECHO Found file %%g.hack.swf, analysing...
-		COPY "%%g.hack.swf" "%%PARENT%%temp"
 		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
 		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\17_102.png"
 		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 174.75%% "%PARENT%temp\%%g.hack.swf_images\17_175.png"
