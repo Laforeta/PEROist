@@ -10,19 +10,22 @@ SET STREAM="%PARENT%bin\stream.exe"
 SET VIEWER="%PARENT%bin\JPEGView\JPEGview.exe"
 
 REM Prepare folders if not already present
-CALL CLEANUP.cmd
+CALL CLEANUP.cmd 2>nul
 IF NOT EXIST temp MKDIR temp
 IF NOT EXIST input MKDIR input
 IF NOT EXIST output MKDIR output
 
 REM Load sprite and extract image to generate preview
-REM COPY operation somehow not working
+:START
 CD output
 IF NOT EXIST *.hack.swf (
-	ECHO No mod packs found, generator will now quit
-	PAUSE
-	GOTO EXIT
-) ELSE ( 
+	SET BYMENU=0
+	ECHO No mod packs found in \output\. 
+	ECHO If you would like to generate a config.ini file using the default API data please enter the file name now
+	SET /p FILENAME=Enter the filename without extensions (e.g. hpxsthymxmki^)^:
+	GOTO INIT
+) ELSE (
+	SET BYMENU=1
 	FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
 		ECHO Found file %%g.hack.swf, analysing...
 		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
@@ -91,12 +94,14 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 		)
 	)
 ) ELSE (
-	ECHO No existing data found, loading default failsafe values.
+	ECHO No existing data found. Please make sure the file name is correct. 
 	PAUSE
+	GOTO :EXIT
 	FOR /f "tokens=1* delims=^=" %%f IN ('FIND "=" "%PARENT%data\default.config.ini"') DO (
 		SET %%f=%%g
 	)
 )
+IF %BYMENU%==0 GOTO WRITE_INI
 PAUSE
 
 :MENU
@@ -349,9 +354,9 @@ GOTO MENU
 REM Writing finalised coordinates to %FILENAME%.config.ini
 REM do ensyue_d even exist? 
 :WRITE_INI
-ECHO Applying offsets to 
+ECHO Writing offsets in %FILENAME%.config.ini
 CD "%PARENT%output"
-DEL /q %FILENAME%.config.ini
+DEL /q %FILENAME%.config.ini 2>nul
 @echo [info]>%FILENAME%.config.ini
 @echo ship_name=%ship_name%>>%FILENAME%.config.ini
 @echo [graph]>>%FILENAME%.config.ini
@@ -385,13 +390,21 @@ DEL /q %FILENAME%.config.ini
 @echo weda_top=!weda_top!>>%FILENAME%.config.ini
 @echo wedb_left=!wedb_left!>>%FILENAME%.config.ini
 @echo wedb_top=!wedb_top!>>%FILENAME%.config.ini
-ECHO Saving new coordinates to %PARENT%output\%FILENAME%.config.ini
+IF EXIST %FILENAME%.config.ini (
+	ECHO Coordinates successfully exported to %PARENT%output\%FILENAME%.config.ini
+) ELSE (
+	ECHO Write operation failed
+)
 PAUSE
-GOTO MENU
-
+IF %BYMENU%==0 (
+	CD %PARENT%
+	GOTO EXIT
+) ELSE (
+	GOTO MENU
+)
 
 
 :EXIT
 ENDLOCAL
-ECHO Shutting down generator...
+ECHO Exiting down generator...
 EXIT /b 0
