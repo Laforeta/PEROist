@@ -38,7 +38,7 @@ CD temp
 REM Redirect all SPECIAL files on the list
 FOR /f %%f in ('TYPE "%_SPECIAL%"') DO (
 	MOVE /y "%%f" "%PARENT%temp\special" 2>nul
-	IF %errorlevel% equ 0 ECHO Special file %%f found, redirecting...
+	IF %errorlevel%===0 ECHO Special file %%f found, redirecting...
 )
 
 REM Rename *.hack.swf to *.hack to isolate two streams
