@@ -112,11 +112,11 @@ ECHO 1 - Preview and change primary offsets (standard)
 ECHO 2 - Preview and change primary offsets (battle-damage)
 ECHO 3 - Preview and change secondary offsets (standard)
 ECHO 4 - Preview and change secondary offsets (battle-damage)
-ECHO 5 - Preview and change wedding offsets [NOT WORKING]
+ECHO 5 - Preview and change wedding offsets
 ECHO 6 - Display current values [and manually enter offset values]
-ECHO 7 - Write offset data to APImodifier.json [NOT WORKING]
-ECHO 8 - Write offset data to %FILENAME%.config.ini
-ECHO 9 - Reset all parameters and reload initial values
+ECHO 7 - Write offset data as APImodifier.json [NOT WORKING YET]
+ECHO 8 - Write offset data as %FILENAME%.config.ini
+ECHO 9 - Abandon all changes and reload initial values
 ECHO 0 - Quit
 ECHO.
 ECHO Choose from one of the options above and press enter:
@@ -253,13 +253,15 @@ REM Batch cannot do floating point calculations, hence 699/400 is used as a scal
 SET /a ANCHOR_X=%ORIGIN_X%-(%CURRENT_WEDA_X%+%CURRENT_WEDB_X%/2)*699/400
 SET /a ANCHOR_Y=%ORIGIN_Y%-%CURRENT_WEDA_Y%*699/400
 ECHO Generating preview based on current values (%ANCHOR_X%,%ANCHOR_Y%)
-ECHO %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoRing.jpg
-ECHO %IM% Preview_NoRing.jpg "%PARENT%data\ring.png" -geometry +400+200 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
-ECHO START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_WEDA_X!,!CURRENT_WEDA_Y!_!CURRENT_WEDB_X!,!CURRENT_WEDB_Y!.jpg"
-ECHO weda defines the XY coordinates of face position while wedb defines the size of the face rectangle
-ECHO It is recommended that you get an approximate area of the character's face via another image editing tool before attempting to change this value manually
-ECHO wedb_top or face height have no effect on preview because it is not used to generate this particular scene
-ECHO However it will affect how the other scenes in WeddingMain are displayed
+%IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoRing.jpg
+%IM% Preview_NoRing.jpg "%PARENT%data\ring.png" -geometry +320+270 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg"
+ECHO Special Instructions for changing wedding scene offsets:
+ECHO Unlike other values, wedding offsets has 4 values
+ECHO weda defines the XY origins of a rectangle covering the face area of your waifu-to-be
+ECHO wedb defines the pixel length of two edges of the rectangle
+ECHO changes to wedb_top (face height) may appear to have no effect because it is unused for this particular view...
+ECHO ...however it will affect other views from the wedding cutscenes
 ECHO Are you happy with the results? 
 SET /p ACCEPT=[y/n]
 IF /i %ACCEPT%==y GOTO MENU
