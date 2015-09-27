@@ -118,8 +118,8 @@ ECHO 3 - Preview and change secondary offsets (standard)
 ECHO 4 - Preview and change secondary offsets (battle-damage)
 ECHO 5 - Preview and change wedding offsets
 ECHO 6 - Display current values [and manually enter offset values]
-ECHO 7 - Write offset data as APImodifier.json [NOT WORKING YET]
-ECHO 8 - Write offset data as %FILENAME%.config.ini
+ECHO 7 - Save offset data as APImodifier.json [for Electronic Observer]
+ECHO 8 - Save offset data as %FILENAME%.config.ini
 ECHO 9 - Abandon all changes and reload initial values
 ECHO 0 - Quit
 ECHO.
@@ -347,8 +347,28 @@ GOTO PROCESS
 
 REM Write offset data for 74EO.
 :WRITE_JSON
-ECHO Write offset data for 74EO [NOT WORKING]
-PAUSE
+CD "%PARENT%output"
+@echo [{>ApiModifier.json.txt
+@echo     "api_filename": "!FILENAME!",>>ApiModifier.json.txt
+@echo     "api_boko_n": [!boko_n_left!,!boko_n_top!],>>ApiModifier.json.txt
+@echo     "api_boko_d": [!boko_d_left!,!boko_d_top!],>>ApiModifier.json.txt
+@echo     "api_kaisyu_n": [!kaisyu_n_left!,!kaisyu_n_top!],>>ApiModifier.json.txt
+@echo     "api_kaisyu_d": [!kaisyu_d_left!,!kaisyu_d_top!],>>ApiModifier.json.txt
+@echo     "api_kaizo_n": [!kaizo_n_left!,!kaizo_n_top!],>>ApiModifier.json.txt
+@echo     "api_kaizo_d": [!kaizo_d_left!,!kaizo_d_top!],>>ApiModifier.json.txt
+@echo     "api_map_n": [!map_n_left!,!map_n_top!],>>ApiModifier.json.txt
+@echo     "api_map_d": [!map_d_left!,!map_d_top!],>>ApiModifier.json.txt
+@echo     "api_ensyuf_n": [!ensyuf_n_left!,!ensyuf_n_top!],>>ApiModifier.json.txt
+@echo     "api_ensyuf_d": [!ensyuf_d_left!,!ensyuf_d_top!],>>ApiModifier.json.txt
+@echo     "api_ensyue_n": [!ensyue_n_left!,!ensyue_n_top!],>>ApiModifier.json.txt
+@echo     "api_battle_n": [!battle_n_left!,!battle_n_top!],>>ApiModifier.json.txt
+@echo     "api_battle_d": [!battle_d_left!,!battle_d_top!]>>ApiModifier.json.txt
+@echo     "api_weda": [!weda_left!,!weda_top!],>>ApiModifier.json.txt
+@echo     "api_wedb": [!wedb_left!,!wedb_top!]>>ApiModifier.json.txt
+@echo }]>>ApiModifier.json.txt
+ECHO A new window will open containing the saved json data, please merge manually
+PAUSE 
+ApiModifier.json.txt
 GOTO MENU
 
 REM Writing finalised coordinates to %FILENAME%.config.ini
