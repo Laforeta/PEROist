@@ -10,7 +10,7 @@ REM Load ship lists
 SET SHIPLIST=%PARENT%data\shiplist.txt
 
 REM Define server IP
-SET "server0="203.104.209.102"  ::Hashirajima
+SET "server0=203.104.209.102"  ::Hashirajima
 SET "server1=203.104.209.71"    ::Yosuoka
 SET "server2=125.6.184.15"      ::Kure
 SET "server3=125.6.184.16"      ::Sasebo
