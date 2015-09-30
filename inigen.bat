@@ -182,14 +182,6 @@ IF /i '%OPTION%'=='0' (
 	SET ALIAS="wedding"
 	SET /a ORIGIN_X=400
 	SET /a ORIGIN_Y=10
-	SET /a CURRENT_WEDA_X=%weda_left%
-	SET /a CURRENT_WEDA_Y=%weda_top%
-	SET /a CURRENT_WEDB_X=%wedb_left%
-	SET /a CURRENT_WEDB_Y=%wedb_top%
-	SET NEW_WEDA_X=weda_left
-	SET NEW_WEDA_Y=weda_top
-	SET NEW_WEDB_X=wedb_left
-	SET NEW_WEDB_Y=wedb_top
 	GOTO WEDDING
 ) ELSE IF /i '%OPTION%'=='6' (
 	GOTO DISPLAY
@@ -254,12 +246,12 @@ GOTO DISPLAY
 
 :WEDDING
 REM Batch cannot do floating point calculations, hence 699/400 is used as a scaling factor instead of 1.7475 and errors should be neglegible
-SET /a ANCHOR_X=%ORIGIN_X%-(%CURRENT_WEDA_X%+%CURRENT_WEDB_X%/2)*699/400
-SET /a ANCHOR_Y=%ORIGIN_Y%-%CURRENT_WEDA_Y%*699/400
+SET /a ANCHOR_X=%ORIGIN_X%-(%weda_left%+%wedb_left%/2)*699/400
+SET /a ANCHOR_Y=%ORIGIN_Y%-%weda_top%*699/400
 ECHO Generating preview based on current values (%ANCHOR_X%,%ANCHOR_Y%)
 %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoRing.jpg
-%IM% Preview_NoRing.jpg "%PARENT%data\ring.png" -geometry +320+270 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
-START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg"
+%IM% Preview_NoRing.jpg "%PARENT%data\ring.png" -geometry +320+270 -composite Preview_!ALIAS!_!weda_left!_!weda_top!_!wedb_left!_!wedb_top!.jpg
+START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!weda_left!_!weda_top!_!wedb_left!_!wedb_top!"
 ECHO Special Instructions for changing wedding scene offsets:
 ECHO Unlike other values, wedding offsets has 4 values
 ECHO weda defines the XY origins of a rectangle covering the face area of your waifu-to-be
@@ -271,18 +263,15 @@ SET /p ACCEPT=[y/n]
 IF /i %ACCEPT%==y GOTO MENU
 CLS
 REM First give new values for currently selected variables
-ECHO Current %NEW_WEDA_X% is %CURRENT_WEDA_X%
-ECHO Please enter a new value for %NEW_WEDA_X%:
-SET /p !NEW_WEDA_X!=
-ECHO Current %NEW_WEDA_Y% is %CURRENT_WEDA_Y%
-ECHO Please enter a new value for %NEW_WEDA_Y%:
-SET /p !NEW_WEDA_Y!=
-ECHO Current %NEW_WEDB_X% is %CURRENT_WEDB_X%
-ECHO Please enter a new value for %NEW_WEDB_X%:
-SET /p !NEW_WEDB_X!=
-ECHO Current %NEW_WEDB_Y% is %CURRENT_WEDB_Y%
-ECHO Please enter a new value for %NEW_WEDB_Y%:
-SET /p !NEW_WEDB_Y!=
+ECHO Current weda_left is %weda_left%
+ECHO Please enter a new value for weda_left:
+SET /p weda_left=
+ECHO Current weda_top is %weda_top%
+ECHO Please enter a new value for weda_top:
+SET /p weda_top=
+ECHO Current wedb_left is %wedb_left%
+ECHO Please enter a new value for wedb_left:
+SET /p wedb_left=
 GOTO Wedding
 
 
