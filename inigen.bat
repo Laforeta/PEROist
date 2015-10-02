@@ -28,10 +28,10 @@ IF NOT EXIST *.hack.swf (
 	SET BYMENU=1
 	FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
 		ECHO Found file %%g.hack.swf, analysing...
-		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format image:png -export image "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
-		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\17_102.png"
-		%IM% "%PARENT%temp\%%g.hack.swf_images\17.png" -resize 174.75%% "%PARENT%temp\%%g.hack.swf_images\17_175.png"
-		%IM% "%PARENT%temp\%%g.hack.swf_images\19.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\19_102.png"
+		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format shape:png -export shape "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\18.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\18_102.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\18.png" -resize 174.75%% "%PARENT%temp\%%g.hack.swf_images\18_175.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\20.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\20_102.png"
 		SET FILENAME=%%g
 		ECHO Finished analysing !FILENAME!.hack.swf
 	)
@@ -130,7 +130,7 @@ IF /i '%OPTION%'=='0' (
 	GOTO EXIT
 ) ELSE IF /i '%OPTION%'=='1' (
 	SET BACKGROUND="%PARENT%data\room.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17_102.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\18_102.png"
 	SET ALIAS="standard"
 	SET /a ORIGIN_X=327
 	SET /a ORIGIN_Y=-65
@@ -142,7 +142,7 @@ IF /i '%OPTION%'=='0' (
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='2' (
 	SET BACKGROUND="%PARENT%data\room.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\19_102.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\20_102.png"
 	SET ALIAS="battledamage"
 	SET /a ORIGIN_X=327
 	SET /a ORIGIN_Y=-65
@@ -154,7 +154,7 @@ IF /i '%OPTION%'=='0' (
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='3' (
 	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\13.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\14.png"
 	SET ALIAS="standard"
 	SET /a ORIGIN_X=50
 	SET /a ORIGIN_Y=70
@@ -166,7 +166,7 @@ IF /i '%OPTION%'=='0' (
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='4' (
 	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\15.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\16.png"
 	SET ALIAS="battledamage"
 	SET /a ORIGIN_X=50
 	SET /a ORIGIN_Y=70
@@ -178,7 +178,7 @@ IF /i '%OPTION%'=='0' (
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='5' (
 	SET BACKGROUND="%PARENT%data\chapel.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\17_175.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\18_175.png"
 	SET ALIAS="wedding"
 	SET /a ORIGIN_X=400
 	SET /a ORIGIN_Y=10
@@ -186,10 +186,6 @@ IF /i '%OPTION%'=='0' (
 	SET /a CURRENT_WEDA_Y=%weda_top%
 	SET /a CURRENT_WEDB_X=%wedb_left%
 	SET /a CURRENT_WEDB_Y=%wedb_top%
-	SET NEW_WEDA_X=weda_left
-	SET NEW_WEDA_Y=weda_top
-	SET NEW_WEDB_X=wedb_left
-	SET NEW_WEDB_Y=wedb_top
 	GOTO WEDDING
 ) ELSE IF /i '%OPTION%'=='6' (
 	GOTO DISPLAY
@@ -254,8 +250,8 @@ GOTO DISPLAY
 
 :WEDDING
 REM Batch cannot do floating point calculations, hence 699/400 is used as a scaling factor instead of 1.7475 and errors should be neglegible
-SET /a ANCHOR_X=%ORIGIN_X%-(%CURRENT_WEDA_X%+%CURRENT_WEDB_X%/2)*699/400
-SET /a ANCHOR_Y=%ORIGIN_Y%-%CURRENT_WEDA_Y%*699/400
+SET /a ANCHOR_X=%ORIGIN_X%-(%weda_left%+%wedb_left%/2)*699/400
+SET /a ANCHOR_Y=%ORIGIN_Y%-%weda_top%*699/400
 ECHO Generating preview based on current values (%ANCHOR_X%,%ANCHOR_Y%)
 %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoRing.jpg
 %IM% Preview_NoRing.jpg "%PARENT%data\ring.png" -geometry +320+270 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
@@ -271,18 +267,18 @@ SET /p ACCEPT=[y/n]
 IF /i %ACCEPT%==y GOTO MENU
 CLS
 REM First give new values for currently selected variables
-ECHO Current %NEW_WEDA_X% is %CURRENT_WEDA_X%
-ECHO Please enter a new value for %NEW_WEDA_X%:
-SET /p !NEW_WEDA_X!=
-ECHO Current %NEW_WEDA_Y% is %CURRENT_WEDA_Y%
-ECHO Please enter a new value for %NEW_WEDA_Y%:
-SET /p !NEW_WEDA_Y!=
-ECHO Current %NEW_WEDB_X% is %CURRENT_WEDB_X%
-ECHO Please enter a new value for %NEW_WEDB_X%:
-SET /p !NEW_WEDB_X!=
-ECHO Current %NEW_WEDB_Y% is %CURRENT_WEDB_Y%
-ECHO Please enter a new value for %NEW_WEDB_Y%:
-SET /p !NEW_WEDB_Y!=
+ECHO Current weda_left is %CURRENT_WEDA_X%
+ECHO Please enter a new value:
+SET /p weda_left=
+ECHO Current weda_top is %CURRENT_WEDA_Y%
+ECHO Please enter a new value:
+SET /p weda_top=
+ECHO Current wedb_left is %CURRENT_WEDB_X%
+ECHO Please enter a new value:
+SET /p wedb_left=
+ECHO Current wedb_top is %CURRENT_WEDB_Y%
+ECHO Please enter a new value:
+SET /p wedb_top=
 GOTO Wedding
 
 
