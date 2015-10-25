@@ -120,7 +120,7 @@ ECHO 4 - Preview and change secondary offsets (battle-damage)
 ECHO 5 - Preview and change wedding offsets
 ECHO 6 - Display current values [and manually enter offset values]
 ECHO 7 - Save offset data as APImodifier.json [for Electronic Observer]
-ECHO 8 - Save offset data as %FILENAME%.config.ini and %shipID%.txt
+ECHO 8 - Save offset data as %FILENAME%.config.ini and %FILENAME%.txt
 ECHO 9 - Abandon all changes and reload initial values
 ECHO 0 - Quit
 ECHO.
