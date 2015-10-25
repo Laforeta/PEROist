@@ -91,6 +91,7 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 			SET weda_top=%%e
 			SET wedb_left=%%f
 			SET wedb_top=%%g
+			SET shipName=%%h
 		)
 	)
 ) ELSE (
@@ -119,7 +120,7 @@ ECHO 4 - Preview and change secondary offsets (battle-damage)
 ECHO 5 - Preview and change wedding offsets
 ECHO 6 - Display current values [and manually enter offset values]
 ECHO 7 - Save offset data as APImodifier.json [for Electronic Observer]
-ECHO 8 - Save offset data as %FILENAME%.config.ini
+ECHO 8 - Save offset data as %FILENAME%.config.ini and %shipID%.txt
 ECHO 9 - Abandon all changes and reload initial values
 ECHO 0 - Quit
 ECHO.
@@ -208,6 +209,7 @@ GOTO MENU
 :DISPLAY
 CLS
 ECHO Displaying active offset values for %FILENAME%.hack.swf
+ECHO Currently active name is %shipName%
 ECHO boko_n_left=%boko_n_left%  
 ECHO boko_n_top=%boko_n_top%   
 ECHO boko_d_left=%boko_d_left%
@@ -358,7 +360,7 @@ CD "%PARENT%output"
 @echo     "api_ensyuf_d": [!ensyuf_d_left!,!ensyuf_d_top!],>>ApiModifier.json.txt
 @echo     "api_ensyue_n": [!ensyue_n_left!,!ensyue_n_top!],>>ApiModifier.json.txt
 @echo     "api_battle_n": [!battle_n_left!,!battle_n_top!],>>ApiModifier.json.txt
-@echo     "api_battle_d": [!battle_d_left!,!battle_d_top!]>>ApiModifier.json.txt
+@echo     "api_battle_d": [!battle_d_left!,!battle_d_top!],>>ApiModifier.json.txt
 @echo     "api_weda": [!weda_left!,!weda_top!],>>ApiModifier.json.txt
 @echo     "api_wedb": [!wedb_left!,!wedb_top!]>>ApiModifier.json.txt
 @echo }]>>ApiModifier.json.txt
@@ -409,7 +411,34 @@ DEL /q %FILENAME%.config.ini 2>nul
 IF EXIST %FILENAME%.config.ini (
 	ECHO Coordinates successfully exported to %PARENT%output\%FILENAME%.config.ini
 ) ELSE (
-	ECHO Write operation failed
+	ECHO Write operation failed for %FILENAME%.config.ini
+)
+@echo {>%FILENAME%.txt
+REM @echo   "api_mst_ship":{>>%FILENAME%.txt
+REM @echo	  "api_name":"!shipName!">>%FILENAME%.txt
+REM @echo	},>>%FILENAME%.txt
+@echo   "api_mst_shipgraph": {>>%FILENAME%.txt
+@echo     "api_boko_n": [!boko_n_left!,!boko_n_top!],>>%FILENAME%.txt
+@echo     "api_boko_d": [!boko_d_left!,!boko_d_top!],>>%FILENAME%.txt
+@echo     "api_kaisyu_n": [!kaisyu_n_left!,!kaisyu_n_top!],>>%FILENAME%.txt
+@echo     "api_kaisyu_d": [!kaisyu_d_left!,!kaisyu_d_top!],>>%FILENAME%.txt
+@echo     "api_kaizo_n": [!kaizo_n_left!,!kaizo_n_top!],>>%FILENAME%.txt
+@echo     "api_kaizo_d": [!kaizo_d_left!,!kaizo_d_top!],>>%FILENAME%.txt
+@echo     "api_map_n": [!map_n_left!,!map_n_top!],>>%FILENAME%.txt
+@echo     "api_map_d": [!map_d_left!,!map_d_top!],>>%FILENAME%.txt
+@echo     "api_ensyuf_n": [!ensyuf_n_left!,!ensyuf_n_top!],>>%FILENAME%.txt
+@echo     "api_ensyuf_d": [!ensyuf_d_left!,!ensyuf_d_top!],>>%FILENAME%.txt
+@echo     "api_ensyue_n": [!ensyue_n_left!,!ensyue_n_top!],>>%FILENAME%.txt
+@echo     "api_battle_n": [!battle_n_left!,!battle_n_top!],>>%FILENAME%.txt
+@echo     "api_battle_d": [!battle_d_left!,!battle_d_top!],>>%FILENAME%.txt
+@echo     "api_weda": [!weda_left!,!weda_top!],>>%FILENAME%.txt
+@echo     "api_wedb": [!wedb_left!,!wedb_top!]>>%FILENAME%.txt
+@echo   }>>%FILENAME%.txt
+@echo }>>%FILENAME%.txt
+IF EXIST %FILENAME%.txt (
+	ECHO Coordinates successfully exported to %PARENT%output\%FILENAME%.txt
+) ELSE (
+	ECHO Write operation failed for %FILENAME%.txt
 )
 PAUSE
 IF %BYMENU%==0 (
