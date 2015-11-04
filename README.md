@@ -1,4 +1,4 @@
-### PEROist v7 (25/07/15)
+## PEROist v7 (25/07/15)
 Scripts and tools for Kantai Collection modding
 
 Authored with the dark arts of Windows batch scripting
@@ -13,21 +13,18 @@ This repository does not contain any copyrighted code or images without appropri
 
 ----
 
-# Currently working components:
+### Currently working components:
 
 oneclick.bat: Hassle-free upscaling of in-game graphical assets contained in .swf files. 
 
 autogen.bat: Automatically generate mod packs. 
 
-bump.bat: Bumps or updates the "Last-Modified" metadata of .hack.swf and .hack.mp3 files to fix weirdness of some cache managers. 
-
-# Features in development:
-
 inigen.bat: Interactive generator of .config.ini files to facilitate mod creation. 
 
-download.cmd: Download game assets directly from game servers
+bump.bat: Updates the "Last-Modified" metadata of .hack.swf and .hack.mp3 files to fix weirdness of some cache managers. 
 
-# Planned features
+download.cmd: Game asset downloader and updater.
+
+### Features in development:
 
 PEROist launcher: One unified interface to access all features and streamline mod generating process. 
-
