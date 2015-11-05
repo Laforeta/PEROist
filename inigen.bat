@@ -17,18 +17,19 @@ IF NOT EXIST output MKDIR output
 
 REM Load sprite and extract image to generate preview
 :START
+REM Check the number of *.hack.swf files in \output\
 CD %PARENT%output
 SET FILECOUNTER=0
-FOR %%g in (*.hack.swf) DO (
-	SET /a FILECOUNTER+=1
-)
-IF FILECOUNTER EQU 0 (
+FOR %%g in (*.hack.swf) DO SET /a FILECOUNTER+=1
+
+REM Start via one of the three options
+IF %FILECOUNTER% EQU 0 (
 	SET BYMENU=0
 	ECHO No mod packs found in \output\. 
 	ECHO If you would like to generate a config.ini file using the default API data please enter the file name now
 	SET /p FILENAME=Enter the filename without extensions (e.g. hpxsthymxmki^)^:
 	GOTO INIT
-) ELSE IF FILECOUNTER EQU 1 (
+) ELSE IF %FILECOUNTER% EQU 1 (
 	SET BYMENU=1
 	FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
 		ECHO Loading images in %%g.hack.swf...
@@ -39,7 +40,7 @@ IF FILECOUNTER EQU 0 (
 		SET FILENAME=%%g
 		ECHO Finished loading images in !FILENAME!.hack.swf
 	)
-) ELSE IF FILECOUNTER GTR 1 (
+) ELSE IF %FILECOUNTER% GTR 1 (
 	SET BYMENU=1
 	DIR /A-D /B *.swf | find /v /n "" >filelist
 	ECHO Please choose the file you wish to edit by its number
@@ -58,8 +59,41 @@ IF FILECOUNTER EQU 0 (
 
 CD %PARENT%temp
 
-REM Add the ability to parse api_start and existing file later, for now use an approximate starting value
 :INIT
+REM Reinit variables from previous conversion
+SET "ship_name="
+SET "boko_n_left=" 
+SET "boko_n_top=" 
+SET "boko_d_left="
+SET "boko_d_top="
+SET "map_n_left="
+SET "map_n_top="
+SET "map_d_left="
+SET "map_d_top="
+SET "battle_d_top="
+SET "battle_d_left="
+SET "battle_n_top="
+SET "battle_n_left="
+SET "ensyuf_n_left="
+SET "ensyuf_n_top="
+SET "ensyuf_d_left="
+SET "ensyuf_d_top="
+SET "ensyue_n_left="
+SET "ensyue_n_top="
+SET "kaizo_n_left="
+SET "kaizo_n_top="
+SET "kaizo_d_left="
+SET "kaizo_d_top="
+SET "kaisyu_n_left="
+SET "kaisyu_n_top="
+SET "kaisyu_d_left="
+SET "kaisyu_d_top="
+SET "weda_left="
+SET "weda_top="
+SET "wedb_left="
+SET "wedb_top="
+
+REM Read data in the following order of preference: \input\*.config.ini >> \data\GraphList.txt >> \data\default.config.txt
 IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 	ECHO Loading user-supplied config file...
 	FOR /f "tokens=1* delims=^=" %%f IN ('FIND "=" "%PARENT%input\%FILENAME%.config.ini"') DO (
@@ -111,7 +145,7 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 			SET weda_top=%%e
 			SET wedb_left=%%f
 			SET wedb_top=%%g
-			SET shipName=%%h
+			SET ship_name=%%h
 		)
 	)
 ) ELSE (
@@ -388,7 +422,8 @@ CD "%PARENT%output"
 @echo     "api_weda": [!weda_left!,!weda_top!],>>ApiModifier.json.txt
 @echo     "api_wedb": [!wedb_left!,!wedb_top!]>>ApiModifier.json.txt
 @echo }]>>ApiModifier.json.txt
-ECHO A new window will open containing the saved json data, please merge manually
+ECHO A new window will open containing the saved json data
+ECHO Please manually copy and paste the data into ApiModifier.json in your 74EO install
 PAUSE 
 ApiModifier.json.txt
 GOTO MENU
@@ -437,10 +472,12 @@ IF EXIST %FILENAME%.config.ini (
 ) ELSE (
 	ECHO Write operation failed for %FILENAME%.config.ini
 )
+
+REM Write .txt files for ACGPower
 @echo {>%FILENAME%.txt
-REM @echo   "api_mst_ship":{>>%FILENAME%.txt
-REM @echo	  "api_name":"!shipName!">>%FILENAME%.txt
-REM @echo	},>>%FILENAME%.txt
+@echo   "api_mst_ship":{>>%FILENAME%.txt
+@echo	  "api_name":"!ship_name!">>%FILENAME%.txt
+@echo	},>>%FILENAME%.txt
 @echo   "api_mst_shipgraph": {>>%FILENAME%.txt
 @echo     "api_boko_n": [!boko_n_left!,!boko_n_top!],>>%FILENAME%.txt
 @echo     "api_boko_d": [!boko_d_left!,!boko_d_top!],>>%FILENAME%.txt
