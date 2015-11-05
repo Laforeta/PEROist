@@ -28,11 +28,6 @@ FOR /F "tokens=1* delims=[]" %%g in ('DIR /A-D /B *.swf ^|find /v /n ""') DO (
 
 
 :SORTING
-REM The mod detection will NOT work if mod files have mismatching tags (PNG images with DefineJPEG tags)
-REM Should I just upgrade the whole thing to swfextract? Not that it is less error prone
-REM Check ONECLICK and see if it is redirecting .hack.swf files elsewhere
-
-
 CD temp
 
 REM Redirect all SPECIAL files on the list

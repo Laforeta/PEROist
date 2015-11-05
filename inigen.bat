@@ -17,26 +17,46 @@ IF NOT EXIST output MKDIR output
 
 REM Load sprite and extract image to generate preview
 :START
-CD output
-IF NOT EXIST *.hack.swf (
+CD %PARENT%output
+SET FILECOUNTER=0
+FOR %%g in (*.hack.swf) DO (
+	SET /a FILECOUNTER+=1
+)
+IF FILECOUNTER EQU 0 (
 	SET BYMENU=0
 	ECHO No mod packs found in \output\. 
 	ECHO If you would like to generate a config.ini file using the default API data please enter the file name now
 	SET /p FILENAME=Enter the filename without extensions (e.g. hpxsthymxmki^)^:
 	GOTO INIT
-) ELSE (
+) ELSE IF FILECOUNTER EQU 1 (
 	SET BYMENU=1
 	FOR /f "tokens=1 delims=." %%g IN ('DIR /b *.hack.swf') DO (
-		ECHO Found file %%g.hack.swf, analysing...
-		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format shape:png -export shape "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf"
+		ECHO Loading images in %%g.hack.swf...
+		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format shape:png -export shape "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf" >nul
 		%IM% "%PARENT%temp\%%g.hack.swf_images\18.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\18_102.png"
 		%IM% "%PARENT%temp\%%g.hack.swf_images\18.png" -resize 174.75%% "%PARENT%temp\%%g.hack.swf_images\18_175.png"
 		%IM% "%PARENT%temp\%%g.hack.swf_images\20.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\20_102.png"
 		SET FILENAME=%%g
-		ECHO Finished analysing !FILENAME!.hack.swf
+		ECHO Finished loading images in !FILENAME!.hack.swf
 	)
-	CD %PARENT%temp
+) ELSE IF FILECOUNTER GTR 1 (
+	SET BYMENU=1
+	DIR /A-D /B *.swf | find /v /n "" >filelist
+	ECHO Please choose the file you wish to edit by its number
+	TYPE filelist
+	SET /p FILENO=
+	FOR /f "tokens=2 delims=[]." %%g IN ('FIND filelist "[!FILENO!]"') DO (
+		ECHO Loading images in %%g.hack.swf...
+		java -jar "%PARENT%bin\ffdec\ffdec.jar" -format shape:png -export shape "%PARENT%temp\%%g.hack.swf_images" "%%g.hack.swf" >nul
+		%IM% "%PARENT%temp\%%g.hack.swf_images\18.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\18_102.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\18.png" -resize 174.75%% "%PARENT%temp\%%g.hack.swf_images\18_175.png"
+		%IM% "%PARENT%temp\%%g.hack.swf_images\20.png" -resize 102%% "%PARENT%temp\%%g.hack.swf_images\20_102.png"
+		SET FILENAME=%%g
+		ECHO Finished loading images in !FILENAME!.hack.swf
+	)
 )
+
+CD %PARENT%temp
 
 REM Add the ability to parse api_start and existing file later, for now use an approximate starting value
 :INIT
@@ -112,6 +132,10 @@ ECHO.
 ECHO 		############################
 ECHO 		PEROist config.ini Generator
 ECHO 		############################
+ECHO.
+ECHO                                 vvvvvvvvvvvv
+ECHO -----Currently Selected File is !FILENAME!.hack.swf-----
+ECHO                                 ^^^^^^^^^^^^^^^^^^^^^^^^
 ECHO.
 ECHO 1 - Preview and change primary offsets (standard)
 ECHO 2 - Preview and change primary offsets (battle-damage)
@@ -197,7 +221,7 @@ IF /i '%OPTION%'=='0' (
 ) ELSE IF /i '%OPTION%'=='9' (
 	ECHO Are you sure you want to reset and abandon all changes made so far?
 	SET /p OPTION2=[y/n]
-	IF /i '%OPTION2%'=='y' GOTO INIT
+	IF /i '%OPTION2%'=='y' GOTO START
 	GOTO MENU
 ) ELSE (
 	ECHO Please enter one valid option from the list above
