@@ -11,7 +11,7 @@ IF NOT EXIST output MKDIR output
 
 :SELECT
 REM Change workdir to input and call conversion for all *.config.ini files there
-CD %PARENT%input
+CD "%PARENT%input"
 IF NOT EXIST *.config.ini (
 	ECHO No ini files to process
 	GOTO :EXIT
@@ -23,7 +23,7 @@ IF NOT EXIST *.config.ini (
 )
 
 REM Scan the output for incomplete paired values
-CD %PARENT%output
+CD "%PARENT%output"
 FOR /f "tokens=3 delims=:^ " %%g IN ('FIND /c *.txt ",]"') DO (
 	IF %%g NEQ 0 (
 		ECHO WARNING: The output file shown below contains one or more incomplete value pairs!
@@ -80,7 +80,7 @@ FOR /f "tokens=1* delims=^=" %%g IN ('TYPE !FILENAME!.config.ini') DO (
 )
 
 REM Change working directory to output and write files there
-CD %PARENT%output
+CD "%PARENT%output"
 ECHO {>%FILENAME%.txt
 IF DEFINED ship_name ECHO   "api_mst_ship":{>>%FILENAME%.txt
 IF DEFINED ship_name ECHO	  "api_name":"!ship_Name!">>%FILENAME%.txt
@@ -112,6 +112,6 @@ IF EXIST %FILENAME%.txt (
 )
 
 REM Change workdir back to input
-CD %PARENT%input
+CD "%PARENT%input"
 
 GOTO:EOF

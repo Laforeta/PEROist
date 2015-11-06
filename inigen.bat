@@ -18,7 +18,7 @@ IF NOT EXIST output MKDIR output
 REM Load sprite and extract image to generate preview
 :START
 REM Check the number of *.hack.swf files in \output\
-CD %PARENT%output
+CD "%PARENT%output"
 SET FILECOUNTER=0
 FOR %%g in (*.hack.swf) DO SET /a FILECOUNTER+=1
 
@@ -57,7 +57,7 @@ IF %FILECOUNTER% EQU 0 (
 	)
 )
 
-CD %PARENT%temp
+CD "%PARENT%temp"
 
 :INIT
 REM Reinit variables from previous conversion
@@ -503,7 +503,7 @@ IF EXIST %FILENAME%.txt (
 )
 PAUSE
 IF %BYMENU%==0 (
-	CD %PARENT%
+	CD "%PARENT%"
 	GOTO EXIT
 ) ELSE (
 	GOTO MENU
