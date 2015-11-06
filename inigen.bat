@@ -512,5 +512,5 @@ IF %BYMENU%==0 (
 
 :EXIT
 ENDLOCAL
-ECHO Exiting down generator...
+ECHO Shutting down generator...
 EXIT /b 0
