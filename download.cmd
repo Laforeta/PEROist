@@ -27,7 +27,7 @@ REM Create Download Folder
 IF NOT EXIST download MKDIR download
 
 REM Define server IP
-SET "server0="203.104.209.102"  ::Hashirajima
+SET "server0=203.104.209.102"  ::Hashirajima
 SET "server1=203.104.209.71"    ::Yosuoka
 SET "server2=125.6.184.15"      ::Kure
 SET "server3=125.6.184.16"      ::Sasebo
@@ -61,11 +61,12 @@ ECHO.
 ECHO 1 - Preload/Update complete cache
 ECHO 2 - Download individual sprite file
 ECHO 3 - Download sprites using /data/shiplist.txt
+ECHO 4 - Test Network Connectivity
 ECHO 0 - Quit
 ECHO.
 ECHO Choose from one of the options above and press enter:
 SET "OPTION="
-SET /p OPTION=[1,2,3,0]
+SET /p OPTION=[1,2,3,4,0]
 IF /i '%OPTION%'=='0' (
 	GOTO EXIT
 ) ELSE IF /i '%OPTION%'=='1' (
@@ -74,11 +75,68 @@ IF /i '%OPTION%'=='0' (
     GOTO SINGLE_DOWNLOAD
 ) ELSE IF /i '%OPTION%'=='3' (
     GOTO LIST_DOWNLOAD
+) ELSE IF /i '%OPTION%'=='4' (
+    GOTO SERVER_SELECT
 ) ELSE (
 	ECHO Please choose a valid option from the list above
 	PAUSE
 	GOTO MENU
 )
+GOTO MENU
+
+:SERVER_SELECT
+REM User-select server IP
+ECHO Which server do you belong to? 
+ECHO [1]  Yosuoka       [2]  Kure
+ECHO [3]  Sasebo        [4]  Maizuru
+ECHO [5]  Oominato      [6]  Truk
+ECHO [7]  Lingga        [8]  Rabaul
+ECHO [9]  Shortland     [10] Buin
+ECHO [11] Tawi-Tawi     [12] Palau
+ECHO [13] Brunei        [14] Hitokappu
+ECHO [15] Paramushir    [16] Sukumo
+ECHO [17] Kanoya        [18] Iwakawa
+ECHO [19] Saiki         [20] Hashirajima
+ECHO Please enter the number of your server below, or enter 0 to go back to the previous menu:
+SET /p SERVER_NUMBER=[0-20]
+IF /i '%SERVER_NUMBER%'=='0' (
+	GOTO MENU
+) ELSE IF /i '%SERVER_NUMBER%'=='20' (
+	SET SERVER_IP=%server0%
+) ELSE ( 
+	CALL SET SERVER_IP=%%server!SERVER_NUMBER!%%
+)
+
+REM Test DMM.com reachability
+ECHO Testing connectivity to DMM.com
+wget -O - dmm.com >nul 2>nul
+IF %errorlevel% equ 0 ( 
+	ECHO Success^!
+) ELSE (
+	ECHO fail!
+)
+ECHO.
+
+REM Test KC frontend server reacheability
+ECHO Testing connectivity to KC API server
+wget -O - 203.104.209.7 >nul 2>nul
+IF %errorlevel% equ 0 ( 
+	ECHO Success^!
+) ELSE (
+	ECHO fail!
+)
+ECHO.
+
+REM Test Game server reacheability
+ECHO Testing connectivity to KC game server
+wget -O - %SERVER_IP% >nul 2>nul
+IF %errorlevel% equ 0 ( 
+	ECHO Success^!
+) ELSE (
+	ECHO fail!
+)
+ECHO.
+PAUSE
 GOTO MENU
 
 :FULL_DOWNLOAD
