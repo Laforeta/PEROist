@@ -54,9 +54,9 @@ SET "server19=203.104.209.55"   ::Saiki
 @ECHO OFF
 CLS
 ECHO.
-ECHO 		############################
-ECHO 		PEROist config.ini Generator
-ECHO 		############################
+ECHO 		#####################
+ECHO 		PEROist Cache Manager
+ECHO 		#####################
 ECHO.
 ECHO 1 - Preload/Update complete cache
 ECHO 2 - Download individual sprite file
@@ -109,34 +109,57 @@ IF /i '%SERVER_NUMBER%'=='0' (
 
 REM Test DMM.com reachability
 ECHO Testing connectivity to DMM.com
+ECHO.
 wget -O - dmm.com >nul 2>nul
-IF %errorlevel% equ 0 ( 
-	ECHO Success^!
+IF %errorlevel% equ 0 (
+	ECHO 	-------
+	ECHO 	Success
+	ECHO 	-------
 ) ELSE (
-	ECHO fail!
+	ECHO 	Fail
 )
 ECHO.
 
 REM Test KC frontend server reacheability
 ECHO Testing connectivity to KC API server
+ECHO.
 wget -O - 203.104.209.7 >nul 2>nul
-IF %errorlevel% equ 0 ( 
-	ECHO Success^!
+IF %errorlevel% equ 0 (
+	ECHO 	-------
+	ECHO 	Success
+	ECHO 	-------
 ) ELSE (
-	ECHO fail!
+	ECHO 	Fail
 )
 ECHO.
 
 REM Test Game server reacheability
 ECHO Testing connectivity to KC game server
+ECHO.
 wget -O - %SERVER_IP% >nul 2>nul
 IF %errorlevel% equ 0 ( 
-	ECHO Success^!
+	ECHO 	-------
+	ECHO 	Success
+	ECHO 	-------
 ) ELSE (
-	ECHO fail!
+	ECHO 	Fail
+)
+ECHO.
+
+ECHO Measuring download speed...
+wget -O - %SERVER_IP%/kcs/scenes/BattleMain.swf >nul 2>_response.txt
+ECHO.
+
+FOR /f "tokens=2 skip=8 delims=()" %%g in ('TYPE _response.txt') DO (
+	IF %errorlevel% neq 0 (
+		ECHO Test failed
+	) ELSE (
+		ECHO Downlink speed is %%g
+	)
 )
 ECHO.
 PAUSE
+DEL /q _response.txt
 GOTO MENU
 
 :FULL_DOWNLOAD
