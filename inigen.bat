@@ -188,7 +188,8 @@ SET /p OPTION=[1,2,3,4,5,6,7,8,9,0]
 IF /i '%OPTION%'=='0' (
 	GOTO EXIT
 ) ELSE IF /i '%OPTION%'=='1' (
-	SET BACKGROUND="%PARENT%data\room.png"
+	SET BACKGROUND="%PARENT%data\boko_base.png"
+	SET MASK="%PARENT%data\boko_mask.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\18_102.png"
 	SET ALIAS="standard"
 	SET /a ORIGIN_X=327
@@ -200,7 +201,8 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=1
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='2' (
-	SET BACKGROUND="%PARENT%data\room.png"
+	SET BACKGROUND="%PARENT%data\boko_base.png"
+	SET MASK="%PARENT%data\boko_mask.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\20_102.png"
 	SET ALIAS="battledamage"
 	SET /a ORIGIN_X=327
@@ -212,7 +214,8 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=2
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='3' (
-	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
+	SET BACKGROUND="%PARENT%data\kaisyu_base.png"
+	SET MASK="%PARENT%data\kaisyu_mask.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\14.png"
 	SET ALIAS="standard"
 	SET /a ORIGIN_X=50
@@ -224,7 +227,8 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=0
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='4' (
-	SET BACKGROUND="%PARENT%data\kaisyu_panel.png"
+	SET BACKGROUND="%PARENT%data\kaisyu_base.png"
+	SET MASK="%PARENT%data\kaisyu_mask.png"
 	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\16.png"
 	SET ALIAS="battledamage"
 	SET /a ORIGIN_X=50
@@ -347,7 +351,7 @@ SET /a ANCHOR_X=%ORIGIN_X%+%CURRENT_X%
 SET /a ANCHOR_Y=%ORIGIN_Y%+%CURRENT_Y%
 ECHO Generating preview based on current values (%CURRENT_X%,%CURRENT_Y%)
 %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoMask.jpg
-%IM% Preview_NoMask.jpg "%PARENT%data\room_mask.png" -geometry +0+0 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+%IM% Preview_NoMask.jpg !MASK! -geometry +0+0 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
 START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg"
 ECHO Are you happy with the results? 
 SET /p ACCEPT=[y/n]
