@@ -167,7 +167,6 @@ ECHO 		############################
 ECHO 		PEROist config.ini Generator
 ECHO 		############################
 ECHO.
-ECHO                                 vvvvvvvvvvvv
 ECHO -----Currently Selected File is !FILENAME!.hack.swf-----
 ECHO                                 ^^^^^^^^^^^^^^^^^^^^^^^^
 ECHO.
@@ -175,8 +174,8 @@ ECHO 1 - Preview and change primary offsets (standard)
 ECHO 2 - Preview and change primary offsets (battle-damage)
 ECHO 3 - Preview and change secondary offsets (standard)
 ECHO 4 - Preview and change secondary offsets (battle-damage)
-ECHO 5 - Preview and change wedding offsets
-ECHO 6 - Display current values [and manually enter offset values]
+ECHO 5 - Preview and change miscellaneous offsets
+ECHO 6 - Display and manually modify raw values
 ECHO 7 - Save offset data as APImodifier.json [for Electronic Observer]
 ECHO 8 - Save offset data as %FILENAME%.config.ini and %FILENAME%.txt
 ECHO 9 - Abandon all changes and reload initial values
@@ -240,16 +239,7 @@ IF /i '%OPTION%'=='0' (
 	SET DELTA=0
 	GOTO PROCESS
 ) ELSE IF /i '%OPTION%'=='5' (
-	SET BACKGROUND="%PARENT%data\chapel.png"
-	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\18_175.png"
-	SET ALIAS="wedding"
-	SET /a ORIGIN_X=400
-	SET /a ORIGIN_Y=10
-	SET /a CURRENT_WEDA_X=%weda_left%
-	SET /a CURRENT_WEDA_Y=%weda_top%
-	SET /a CURRENT_WEDB_X=%wedb_left%
-	SET /a CURRENT_WEDB_Y=%wedb_top%
-	GOTO WEDDING
+	GOTO subMenu1
 ) ELSE IF /i '%OPTION%'=='6' (
 	GOTO DISPLAY
 ) ELSE IF /i '%OPTION%'=='7' (
@@ -267,6 +257,83 @@ IF /i '%OPTION%'=='0' (
 	GOTO MENU
 )
 GOTO MENU
+
+:subMenu1
+@ECHO OFF
+CLS
+ECHO.
+ECHO 		##############################################
+ECHO 		PEROist config.ini Generator - Scene Selection
+ECHO 		##############################################
+ECHO.
+ECHO -----Currently Selected File is !FILENAME!.hack.swf-----
+ECHO                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+ECHO.
+ECHO 1 - Wedding
+ECHO 2 - battle_n 
+ECHO 3 - battle_d
+ECHO 4 - ensyun_f
+ECHO 5 - ensyud_f
+ECHO 6 - ensyun_e
+ECHO 7 - map_n
+ECHO 8 - map_d
+ECHO 9 - Go back to the previous menu
+ECHO.
+ECHO Choose from one of the options above and press enter:
+SET "OPTION="
+SET /p OPTION=[1,2,3,4,5,6,7,8,9]
+IF /i '%OPTION%'=='0' (
+	GOTO EXIT
+) ELSE IF /i '%OPTION%'=='1' (
+	SET BACKGROUND="%PARENT%data\chapel.png"
+	SET MASK="%PARENT%data\ring.png"
+	SET SPRITE="%PARENT%temp\!FILENAME!.hack.swf_images\18_175.png"
+	SET ALIAS="wedding"
+	SET /a ORIGIN_X=400
+	SET /a ORIGIN_Y=10
+	SET /a CURRENT_WEDA_X=%weda_left%
+	SET /a CURRENT_WEDA_Y=%weda_top%
+	SET /a CURRENT_WEDB_X=%wedb_left%
+	SET /a CURRENT_WEDB_Y=%wedb_top%
+	GOTO WEDDING
+) ELSE IF /i '%OPTION%'=='2' (
+	ECHO Not implemented yet
+	PAUSE
+	GOTO subMenu1
+	
+) ELSE IF /i '%OPTION%'=='3' (
+	ECHO Not implemented yet
+	PAUSE
+	GOTO subMenu1
+) ELSE IF /i '%OPTION%'=='4' (
+	ECHO Not implemented yet
+	PAUSE
+	GOTO subMenu1
+) ELSE IF /i '%OPTION%'=='5' (
+	ECHO Not implemented yet
+	PAUSE
+	GOTO subMenu1
+) ELSE IF /i '%OPTION%'=='6' (
+	ECHO Not implemented yet
+	PAUSE
+	GOTO subMenu1
+) ELSE IF /i '%OPTION%'=='7' (
+	ECHO Not implemented yet
+	PAUSE
+	GOTO subMenu1
+) ELSE IF /i '%OPTION%'=='8' (
+	ECHO Not implemented yet
+	PAUSE
+	GOTO subMenu1
+) ELSE IF /i '%OPTION%'=='9' (
+	ECHO Returning to the previous menu, your data has been saved
+	GOTO MENU
+) ELSE (
+	ECHO Please enter one valid option from the list above
+	PAUSE
+	GOTO MENU
+)
+GOTO subMenu1
 
 :DISPLAY
 CLS
@@ -318,7 +385,7 @@ SET /a ANCHOR_X=%ORIGIN_X%-(%weda_left%+%wedb_left%/2)*699/400
 SET /a ANCHOR_Y=%ORIGIN_Y%-%weda_top%*699/400
 ECHO Generating preview based on current values (%ANCHOR_X%,%ANCHOR_Y%)
 %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoRing.jpg
-%IM% Preview_NoRing.jpg "%PARENT%data\ring.png" -geometry +320+270 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+%IM% Preview_NoRing.jpg !MASK! -geometry +320+270 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
 START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg"
 ECHO Special Instructions for changing wedding scene offsets:
 ECHO Unlike other values, wedding offsets has 4 values
@@ -345,13 +412,19 @@ ECHO Please enter a new value:
 SET /p wedb_top=
 GOTO Wedding
 
+:SCENES
+
 
 :PROCESS
 SET /a ANCHOR_X=%ORIGIN_X%+%CURRENT_X%
 SET /a ANCHOR_Y=%ORIGIN_Y%+%CURRENT_Y%
 ECHO Generating preview based on current values (%CURRENT_X%,%CURRENT_Y%)
 %IM% !BACKGROUND! !SPRITE! -geometry +!ANCHOR_X!+!ANCHOR_Y! -composite Preview_NoMask.jpg
-%IM% Preview_NoMask.jpg !MASK! -geometry +0+0 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+IF DEFINED MASK (
+	%IM% Preview_NoMask.jpg !MASK! -geometry +0+0 -composite Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+) ELSE (
+	REN Preview_NoMask.jpg Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg
+)
 START %VIEWER% "%PARENT%temp\Preview_!ALIAS!_!CURRENT_X!_!CURRENT_Y!.jpg"
 ECHO Are you happy with the results? 
 SET /p ACCEPT=[y/n]
@@ -516,5 +589,7 @@ IF %BYMENU%==0 (
 
 :EXIT
 ENDLOCAL
-ECHO Shutting down generator...
+ECHO Removing temporary files and shutting down generator...
+CD "%PARENT%"
+DEL /temp
 EXIT /b 0
