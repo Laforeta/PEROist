@@ -478,10 +478,9 @@ IF EXIST %FILENAME%.config.ini (
 )
 
 REM Write .txt files for ACGPower
-@echo {>%FILENAME%.txt
-@echo   "api_mst_ship":{>>%FILENAME%.txt
+@echo {"api_mst_ship":{>%FILENAME%.txt
 @echo	  "api_name":"!ship_name!">>%FILENAME%.txt
-@echo	},>>%FILENAME%.txt
+@echo   },>>%FILENAME%.txt
 @echo   "api_mst_shipgraph": {>>%FILENAME%.txt
 @echo     "api_boko_n": [!boko_n_left!,!boko_n_top!],>>%FILENAME%.txt
 @echo     "api_boko_d": [!boko_d_left!,!boko_d_top!],>>%FILENAME%.txt
