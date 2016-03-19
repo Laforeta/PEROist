@@ -141,10 +141,10 @@ REM Build image list for SPECIAL
 CD "%PARENT%temp\special"
 FOR /f "delims=" %%g IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
 	ECHO Generating image list for %%g
-	DIR /b "%PARENT%temp\special\%%g_images\*.png" >"%%g_images\%%g_images.txt"
+	DIR /b /o:d "%PARENT%temp\special\%%g_images\*.png" >"%%g_images\%%g_images.txt"
 )
 
-REM Merged scale routines for KANMUSU
+REM Merged scale routines for SPECIAL
 FOR /f "delims=" %%f IN ('DIR /b /a:-d "%PARENT%temp\special\*.swf"') DO (
 	SET "FILENAME=%%f"
 	CD "%PARENT%temp\special\%%f_images"
