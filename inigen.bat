@@ -101,25 +101,25 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 	)
 ) ELSE IF EXIST "%PARENT%data\GraphList.txt" (
 	ECHO Finding offsets in GraphList.txt
-	FOR /f "tokens=8-11 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+	FOR /f "tokens=7-10 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
 		SET boko_n_left=%%g
 		SET boko_n_top=%%h
 		SET boko_d_left=%%i
 		SET boko_d_top=%%j
 	)
-	FOR /f "tokens=12-15 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+	FOR /f "tokens=11-14 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
 		SET map_n_left=%%g
 		SET map_n_top=%%h
 		SET map_d_left=%%i
 		SET map_d_top=%%j
 	)
-	FOR /f "tokens=16-19 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+	FOR /f "tokens=15-18 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
 		SET battle_n_left=%%g
 		SET battle_n_top=%%h
 		SET battle_d_left=%%i
 		SET battle_d_top=%%j
 	)
-	FOR /f "tokens=20-25 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+	FOR /f "tokens=19-24 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
 		SET ensyuf_n_left=%%g
 		SET ensyuf_n_top=%%h
 		SET ensyuf_d_left=%%i
@@ -127,17 +127,17 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 		SET ensyue_n_left=%%k
 		SET ensyue_n_top=%%l
 	)
-	FOR /f "tokens=26-29 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+	FOR /f "tokens=25-28 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
 		SET kaizo_n_left=%%g
 		SET kaizo_n_top=%%h
 		SET kaizo_d_left=%%i
 		SET kaizo_d_top=%%j
 	)
-	FOR /f "tokens=30-31 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+	FOR /f "tokens=29-30 delims=," %%g IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
 		SET kaisyu_n_left=%%g
 		SET kaisyu_n_top=%%h
 	)
-	FOR /f "tokens=30* delims=," %%A IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
+	FOR /f "tokens=29* delims=," %%A IN ('FIND "%FILENAME%" "%PARENT%data\GraphList.txt"') DO (
 		FOR /f "tokens=1-7* delims=," %%a IN ("%%B") DO (
 			SET kaisyu_d_left=%%b
 			SET kaisyu_d_top=%%c
@@ -148,6 +148,7 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 			SET ship_name=%%h
 		)
 	)
+	IF NOT DEFINED ship_name ECHO No existing data found, loading failsafe values && CALL :DEFAULT_DATA 
 ) ELSE (
 	ECHO No existing data found. Please make sure the file name is correct. 
 	PAUSE
@@ -156,6 +157,7 @@ IF EXIST "%PARENT%input\%FILENAME%.config.ini" (
 		SET %%f=%%g
 	)
 )
+
 IF %BYMENU%==0 GOTO WRITE_INI
 PAUSE
 
@@ -478,6 +480,7 @@ IF EXIST %FILENAME%.config.ini (
 )
 
 REM Write .txt files for ACGPower
+IF NOT DEFINED ship_name ECHO Warning: Ship name is not available. Please manually check the output. && PAUSE
 @echo {"api_mst_ship":{>%FILENAME%.txt
 @echo	  "api_name":"!ship_name!">>%FILENAME%.txt
 @echo   },>>%FILENAME%.txt
@@ -512,6 +515,39 @@ IF %BYMENU%==0 (
 	GOTO MENU
 )
 
+:DEFAULT_DATA
+SET boko_n_left=0
+SET boko_n_top=0
+SET boko_d_left=0
+SET boko_d_top=0
+SET map_n_left=0
+SET map_n_top=0
+SET map_d_left=0
+SET map_d_top=0
+SET battle_d_top=0
+SET battle_d_left=0
+SET battle_n_top=0
+SET battle_n_left=0
+SET ensyuf_n_left=0
+SET ensyuf_n_top=0
+SET ensyuf_d_left=0
+SET ensyuf_d_top=0
+SET ensyue_n_left=0
+SET ensyue_n_top=0
+SET kaizo_n_left=0
+SET kaizo_n_top=0
+SET kaizo_d_left=0
+SET kaizo_d_top=0
+SET kaisyu_n_left=0
+SET kaisyu_n_top=0
+SET kaisyu_d_left=0
+SET kaisyu_d_top=0
+SET weda_left=0
+SET weda_top=0
+SET wedb_left=0
+SET wedb_top=0
+
+GOTO :EOF
 
 :EXIT
 ENDLOCAL
