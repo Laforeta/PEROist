@@ -6,6 +6,9 @@ SET PARENT=%~dp0
 REM Define location of wget binary
 PATH %cd%\bin
 
+REM Disable update for now, pending conversion to api_start2 parser
+GOTO SKIP_UPDATE
+
 REM Check for cache list updates
 ECHO Updating CacheList.txt...
 CD data
@@ -18,6 +21,8 @@ if %errorlevel% neq 0 (
 	ECHO CacheList.txt is up to date
 )
 CD ..
+
+:SKIP_UPDATE
 
 REM Define ship lists
 SET SHIPLIST="%PARENT%data\shiplist.txt"
